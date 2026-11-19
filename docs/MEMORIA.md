@@ -1,5 +1,12 @@
 # Memoria de continuidad
 
+## Rutas 404 alojadas — 19/11
+
+- Sustituida configuración Vercel de rewrites/headers por routes ordenadas: cabeceras globales/administrativas, SSR y CSR explícitos, filesystem para archivos y funciones existentes, cierre con404.html/status404/noindex/no-store. No convierte rutas válidas ni API existentes en404.
+- Prueba de configuración cubre precedencia, accesos administrativos, SSR, archivos y rutas inexistentes; PASS. test:packaging2/2, check:release14/14 y diff --check aprobados. Se reutiliza build productivo vigente, sin cambios Angular/API/SQL/Storage/claves. Suite anterior20 API/24 SQL/80 Angular/1 SSR.
+- Corrección autorizada se sube para despliegue automático y validación HTTP. No declarar404 alojado corregido hasta verificar. Fuente oficial routes: https://vercel.com/docs/build-output-api/configuration. Stripe continúa desactivado y recuperación de contraseña pendiente.
+
+
 ## Corrección del empaquetado ESM — 19/11
 
 - Logs alojados aportados por propietario confirman ERR_MODULE_NOT_FOUND: api/catalog.js conservaba import a server/config/supabase.ts. Fallo de compilación/empaquetado, no credenciales. Config raíz usada por Vercel incorpora rewriteRelativeImportExtensions:true; conserva imports .ts para ejecución local y emite rutas .js al compilar. Referencia oficial: https://www.typescriptlang.org/tsconfig/rewriteRelativeImportExtensions.html.
@@ -373,3 +380,5 @@ Captura de esta revisión guardada y comprobada visualmente: docs/capturas/fase9
 Subida completada y SHA remoto verificado: main 1c78b5ca15f066c3a63a0e520cecc1c0db16d4ab. Checkout tests2/2 tras corregir fixtures; comprobación paquete14/14. GitHub aceptó push sin excepción de protección y sin force. gh no está instalado; no se afirma CI remota aprobada. Vercel aún no desplegado. Informe local de entrega fase9-github-informe.html; captura se intentará con control Windows, no Dashboard. Recargar importación antes de configurar build y variables.
 
 No nueva captura Windows de entrega: Chrome muestra resultado de autenticación de Git Credential Manager y no se automatiza esa pantalla. Informe HTML local de entrega disponible; captura anterior del paquete conservada. Auxiliar4203 detenido. Se guardan en commit documental los resultados de la subida.
+
+Resultado alojado tras push0e14fc9 y despliegue automático:17/18 comprobaciones PASS. public-config/catalog200; Checkout200 enabled=false/mode=test; status/webhook405 por GET; download/image404 sin identificador; sitemap503 esperado por dominio canónico sin configurar. Todos los500 anteriores desaparecen. Solo /no-existe mantiene200; pendiente independiente, no se declara aceptación integral. Pruebas locales20 API/24 SQL/80 Angular/1 SSR/1 empaquetado aprobadas. Comprobaciones anónimas de solo lectura, no descarga positiva ni sesión administrativa.

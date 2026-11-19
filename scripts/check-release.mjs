@@ -32,7 +32,7 @@ try{
  check('Robots excluye administración y API',robots.includes('Disallow: /administracion')&&robots.includes('Disallow: /api/'));
  const config=JSON.parse(await readFile('vercel.json','utf8'));
  check('SSR incluido en el paquete de la función Vercel',config.functions?.['api/render.ts']?.includeFiles==='dist/wow-forever-addons/{server,browser}/**');
- check('Rewrite de fichas hacia SSR',config.rewrites.some(r=>r.source==='/addons/:slug'&&r.destination==='/api/render?slug=:slug'));
+ check('Rewrite de fichas hacia SSR',config.routes.some(r=>r.src==='/addons/([^/]+)'&&r.dest==='/api/render?slug=$1'));
  const example=parseEnv(await readFile('.env.example','utf8'));
  check('Plantilla mantiene Checkout y webhook desactivados',example.STRIPE_TEST_CHECKOUT_ENABLED==='false'&&example.STRIPE_TEST_WEBHOOK_ENABLED==='false');
  const report={scope:'Inspección local del paquete; no autoriza producción ni verifica servicios alojados',checks};

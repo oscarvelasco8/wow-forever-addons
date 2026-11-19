@@ -4,33 +4,56 @@
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
   "outputDirectory": "dist/wow-forever-addons/browser",
-  "functions": { "api/render.ts": { "includeFiles": "dist/wow-forever-addons/{server,browser}/**", "maxDuration": 30 }, "api/image.ts": { "maxDuration": 20 } },
-  "rewrites": [
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
-    { "source": "/addons/:slug", "destination": "/api/render?slug=:slug" },
-    { "source": "/administracion", "destination": "/index.csr.html" },
-    { "source": "/administracion/categorias", "destination": "/index.csr.html" },
-    { "source": "/administracion/addons/:id", "destination": "/index.csr.html" },
-    { "source": "/administracion/addons/:id/archivos", "destination": "/index.csr.html" },
-    { "source": "/administracion/addons/:id/publicacion", "destination": "/index.csr.html" },
-    { "source": "/administracion/verificar", "destination": "/index.csr.html" },
-    { "source": "/administracion/restablecer", "destination": "/index.csr.html" }
-  ],
-  "headers": [
+  "functions": {
+    "api/render.ts": {
+      "includeFiles": "dist/wow-forever-addons/{server,browser}/**",
+      "maxDuration": 30
+    },
+    "api/image.ts": {
+      "maxDuration": 20
+    }
+  },
+  "routes": [
     {
-      "source": "/administracion/:path*",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
-      ]
+      "src": "/(.*)",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Frame-Options": "DENY"
+      },
+      "continue": true
     },
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "X-Frame-Options", "value": "DENY" }
-      ]
+      "src": "/administracion(?:/.*)?",
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow"
+      },
+      "continue": true
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "/api/sitemap"
+    },
+    {
+      "src": "/addons/([^/]+)",
+      "dest": "/api/render?slug=$1"
+    },
+    {
+      "src": "/administracion(?:/categorias|/verificar|/restablecer|/addons/[^/]+(?:/archivos|/publicacion)?)?/?",
+      "dest": "/index.csr.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/404.html",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow"
+      }
     }
   ]
 }
