@@ -1,5 +1,34 @@
 # Registro de trabajo
 
+## Sesión: confirmación del propietario — 19/11
+
+- Propietario responde «Funciona correctamente» tras pedir primer login/MFA y prueba de sesión recordada. Registrar como confirmación manual de usuario, no como prueba autónoma de todas las pestañas.
+- Agente comprobó catálogo → Acceso del equipo en pestaña auxiliar integrada10; ese perfil no tenía sesión y volvió a login. No contradice confirmación del propietario en su navegador/perfil, ni permite afirmar prueba nueva pestaña autenticada completada por agente. No se le piden de nuevo credenciales. Se cierra solo pestaña auxiliar creada, sin cerrar sesión ni pestañas del usuario.
+- Sesiones independientes por navegador/perfil/origen; Chrome y navegador integrado no comparten almacenamiento. Persistencia7d dentro del mismo navegador conserva MFA/RLS. Catálogo y publicación guiada todavía pendientes de revisión/integración; recuperación por correo aplazada.
+
+
+## Sesión desplegada por separado — 19/11
+
+Usuario reitera problema Acceso del equipo. Main ahora0ee9ab3 incluye SOLO persistencia/restauración de sesión hasta7d y footer al panel, manteniendo recuperación Vercel7774aeb, MFA y autorización remota. Catálogo y publicación simplificada de esta rama3c1a098 siguen pendientes. No volver a desplegar esta rama entera sin incorporar main. Pruebas20 API/24 SQL/88 Angular/1 SSR/2 empaquetado PASS; Vercel success y login real inspeccionado sin credenciales, captura fase4-sesion-recordada-vercel.jpg. Se pide propietario primer login/MFA en pestaña integrada para probar retorno y nueva pestaña. Aún no se declara esa prueba real aprobada. No más intentos de recuperación de contraseña.
+
+
+## Recuperación aplazada tras nuevo intento — 19/11
+
+- Usuario solicitó enlace en navegador integrado, lo abrió primero en otro navegador y recibió falta de comprobación local. Después lo abrió en integrado y obtuvo enlace no validado/caducado/usado/anterior. No confirmó cambio de contraseña ni nuevo login.
+- Usuario decide dejarlo pendiente. No solicitar más correos ni seguir probando ahora. Primera apertura puede haber consumido enlace, pero no se ha corroborado causa exacta; no afirmar que esperar o reiniciar límite de correo resolverá validación. Enlaces usados no se restablecen al esperar.
+- Configuración de retorno Vercel y formulario habilitado sí comprobados; recuperación de extremo a extremo NO aprobada. Próximo cuando usuario retome: un enlace nuevo pedido y abierto exclusivamente en mismo navegador, sin apertura previa externa, y diagnóstico seguro de código de error si vuelve a fallar. Nunca registrar URL de enlace, verifier, contraseñas o códigos. Tres mejoras de usabilidad continúan en rama separada sin revisión visual final.
+
+
+## Recuperación en dominio alojado — en curso19/11
+
+- Usuario vuelve a casa y deja revisión de las tres mejoras para más tarde. Rama codex/usabilidad-administracion sigue sin integrar, main continúa ba14d4a. Autoriza continuar recuperación y confirma tener correo/autenticador; no pedir contraseñas, enlaces o códigos.
+- Causa comprobada: recoveryConfigured solo permitía origen LAN antiguo. Preparado permiso exacto adicional https://wow-forever-addons.vercel.app, conservando restricción contra previews arbitrarios. requestRecovery genera /administracion/restablecer en ese mismo origen.
+- Trabajo aislado de main en codex/recuperacion-produccion, worktree LOCALAPPDATA/WoWForeverAddons/worktrees/recovery; node_modules junction local, sin copiar .env ni claves. Root sigue rama de usabilidad y notas locales preservadas. No mezclar las tres mejoras que usuario pospone.
+- Nuevo test confirma retorno Vercel y deniega dominio preview. Angular86/86, build, SSR1/1 y empaquetado2/2 aprobados. No desplegado todavía. Se mantiene validación PKCE de recuperación, pertenencia y MFA antes de updateUser; no cambios SQL ni credenciales.
+- Pendiente información solicitada por herramienta: Site URL y Redirect URLs de Authentication → URL Configuration de Supabase, solo direcciones públicas, para comprobar allowlist del retorno exacto. MCP disponible no expone ajuste Auth URL. No solicitar otro correo hasta verificar allowlist y desplegar corrección.
+- Fuentes oficiales consultadas passwords y redirect-urls Supabase. Capturas finales deberán omitir enlaces/códigos y contraseñas; usuario realiza envío de correo, MFA y cambio de contraseña manualmente. No dar recuperación por comprobada hasta resultado real.
+
+
 ## Tres mejoras administrativas — implementación y QA en curso19/11
 
 - Propietario autoriza hacer las tres mejoras mientras está fuera, y precisa simplificar todo el recorrido desde creación hasta publicación. Ya no se dejan para más adelante. No cambiar contenido de Rumbo ni publicar pruebas en su nombre.
@@ -526,3 +555,7 @@ QA final en curso: captura/activación de Chrome falla con «failed to activate 
 Añadidos además marcador de migración de sesión para impedir que una pestaña antigua restaure credenciales después del logout; caducidad absoluta no se amplía con refresh; pageshow para volver desde historial; límite ZIP antes de leer bytes y reseteo de selectores tras guardar/recargar. Documentación Supabase getSession/getUser/changelog consultada: autorización remota permanece; sin cambios SQL ni Auth remoto. Siguiente paso bloqueado por entorno: recuperar control de Chrome, inspeccionar dos pantallas en escritorio/móvil y probar vuelta a administración con sesión del propietario. La publicación nueva se prueba sin tocar Rumbo ni contenido real existente.
 
 Cierre técnico de preparación19/11: npm run check PASS20 API/24 SQL/98 Angular/1 SSR/2 empaquetado; build final tras añadir opción nueva versión PASS, check:release14/14 y diff --check correctos. Inicial322,69kB/89,47kB estimado. Rama codex/usabilidad-administracion creada para conservar tres mejoras sin sustituir main/producción antes de revisión visual requerida. No se anuncia entrega visual completada ni despliegue productivo. Se guardan capturas reales anteriores (panel y ZIP) como evidencia histórica, no como capturas del flujo nuevo. Chrome no se puede activar; no se han inventado capturas. Próximo al regreso: inspeccionar flujo y sesión en navegador real, probar publicación controlada/retirada y merge solo tras corregir lo que revele revisión. Recuperación de contraseña separada pendiente.
+
+Rama subida y verificada: codex/usabilidad-administracion, commit3c1a0985aca17f6e9ffd456875c07b197afd4411. main remoto sigue ba14d4a; producción no sustituida. GitHub combined status Vercel success para despliegue de prueba https://vercel.com/oscarvelasco8s-projects/wow-forever-addons/FTdDE8RtvJG6okanJMvyb16yYMD4. No implica revisión visual ni prueba HTTP de ese destino; no se afirma CI GitHub Actions aprobada (solo suite local y status Vercel). Índice antes de commit35 archivos, cero coincidencias de valores privados locales y cero rutas prohibidas. Auxiliar4201 detenido. Al volver: abrir Visit de ese despliegue, revisión visual y pruebas con sesión; no pedir ni registrar claves o códigos.
+
+7774aeb desplegado en main; status Vercel success. Revisada visualmente página real /administracion/recuperar en navegador integrado: tras hidratación desaparece aviso de origen y campo correo/botón Solicitar enlace habilitados. Captura fase4-recuperacion-vercel-habilitada.jpg sin correos/códigos, guardada en workspace principal. Nueva herramienta CUA permite ahora leer pestaña integrada, a diferencia del bloqueo Windows anterior; no extrapolar a revisión de tres mejoras (sigue aplazada). Se deja pestaña como handoff para usuario. Siguiente: usuario solicita solo un correo nuevo, usa enlace en mismo navegador/dispositivo, completa MFA y contraseña manualmente y confirma nuevo login. No se ha solicitado correo ni cambiado contraseña por agente; recuperación no cerrada todavía.
