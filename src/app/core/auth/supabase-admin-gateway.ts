@@ -17,7 +17,7 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
   private recoveryReady = false;
   get recoveryConfigured(): boolean {
     // Keep in sync with Auth's exact redirect allowlist; add production origin at deployment.
-    return this.configured && this.browser && location.origin === 'http://192.168.1.137:4200';
+    return this.configured && this.browser && ['http://192.168.1.137:4200', 'https://wow-forever-addons.vercel.app'].includes(location.origin);
   }
   get configured(): boolean { return this.config !== null; }
 

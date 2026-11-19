@@ -37,6 +37,16 @@ describe('Supabase administrator adapter', () => {
     });
   });
 
+  it('uses the exact deployed recovery origin without allowing arbitrary preview deployments', async () => {
+    vi.stubGlobal('location', { origin: 'https://wow-forever-addons.vercel.app' });
+    mock.auth.resetPasswordForEmail.mockResolvedValue({ error: null });
+    await gateway.requestRecovery('owner@example.test');
+    expect(mock.auth.resetPasswordForEmail).toHaveBeenCalledWith('owner@example.test', {
+      redirectTo: 'https://wow-forever-addons.vercel.app/administracion/restablecer',
+    });
+    vi.stubGlobal('location', { origin: 'https://wow-forever-addons-preview.vercel.app' });
+    expect(gateway.recoveryConfigured).toBe(false);
+  });
   it('does not send recovery mail from an origin absent from the allowlist', async () => {
     vi.stubGlobal('location', { origin: 'https://unconfigured.example.test' });
     await expect(gateway.requestRecovery('owner@example.test')).rejects.toThrow();
@@ -143,11 +153,13 @@ describe('Supabase administrator adapter', () => {
   it('removes tab credentials even when remote sign-out fails', async () => {
     await gateway.checkAccess();
     sessionStorage.setItem('wfa-admin-auth', 'test-session');
-    localStorage.setItem('wfa-admin-auth','test-shared-session');localStorage.setItem('wfa-admin-auth-expires-at','9999999999999');
+    localStorage.setItem('wfa-admin-auth', 'test-shared-session');
+    localStorage.setItem('wfa-admin-auth-expires-at', '9999999999999');
     mock.auth.signOut.mockResolvedValue({ error: new Error('offline') });
     await expect(gateway.signOut()).rejects.toThrow();
     expect(sessionStorage.getItem('wfa-admin-auth')).toBeNull();
-    expect(localStorage.getItem('wfa-admin-auth')).toBeNull();expect(localStorage.getItem('wfa-admin-auth-expires-at')).toBeNull();
+    expect(localStorage.getItem('wfa-admin-auth')).toBeNull();
+    expect(localStorage.getItem('wfa-admin-auth-expires-at')).toBeNull();
     expect(mock.auth.stopAutoRefresh).toHaveBeenCalled();
   });
 });

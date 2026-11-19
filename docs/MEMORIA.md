@@ -10,6 +10,12 @@
 ## Sesión desplegada por separado — 19/11
 
 Usuario reitera problema Acceso del equipo. Main ahora0ee9ab3 incluye SOLO persistencia/restauración de sesión hasta7d y footer al panel, manteniendo recuperación Vercel7774aeb, MFA y autorización remota. Catálogo y publicación simplificada de esta rama3c1a098 siguen pendientes. No volver a desplegar esta rama entera sin incorporar main. Pruebas20 API/24 SQL/88 Angular/1 SSR/2 empaquetado PASS; Vercel success y login real inspeccionado sin credenciales, captura fase4-sesion-recordada-vercel.jpg. Se pide propietario primer login/MFA en pestaña integrada para probar retorno y nueva pestaña. Aún no se declara esa prueba real aprobada. No más intentos de recuperación de contraseña.
+## Sesión administrativa integrada por separado — en curso19/11
+
+- Usuario insiste en que Acceso del equipo siempre pide login. Causa observada en main: footer dirigía a /administracion/acceso y login no intentaba restaurar sesión; almacenamiento seguía solo por pestaña. Arreglo existía en rama aplazada, aún no productivo.
+- Se separa únicamente arreglo de sesión de3c1a098 a main, conservando permiso de recuperación Vercel7774aeb. No integrar catálogo ni asistente de publicación todavía. Footer ahora /administracion pasa por guard; login directo intenta restaurar getUser/admin_access. Sesión recordada hasta7d con caducidad absoluta, migración antigua de pestaña, logout limpia ambas copias y marcador impide resucitar sesión desde pestaña antigua. PKCE1h separado. No almacenar ni mostrar contraseñas/códigos.
+- Validación Angular88 PASS y suite completa en curso. Se mantienen comprobaciones de pertenencia y MFA en backend; no modificar Supabase Auth remoto. Recuperación por correo sigue aplazada por usuario, sin nuevas solicitudes.
+- Después de desplegar: usuario puede necesitar un primer login para crear sesión recordada; comprobar retorno desde catálogo y nueva pestaña sin volver a pedir contraseña. No afirmar prueba real hasta observarla. Captura sin credenciales tras revisión visual.
 
 
 ## Recuperación aplazada tras nuevo intento — 19/11
@@ -17,6 +23,13 @@ Usuario reitera problema Acceso del equipo. Main ahora0ee9ab3 incluye SOLO persi
 - Usuario solicitó enlace en navegador integrado, lo abrió primero en otro navegador y recibió falta de comprobación local. Después lo abrió en integrado y obtuvo enlace no validado/caducado/usado/anterior. No confirmó cambio de contraseña ni nuevo login.
 - Usuario decide dejarlo pendiente. No solicitar más correos ni seguir probando ahora. Primera apertura puede haber consumido enlace, pero no se ha corroborado causa exacta; no afirmar que esperar o reiniciar límite de correo resolverá validación. Enlaces usados no se restablecen al esperar.
 - Configuración de retorno Vercel y formulario habilitado sí comprobados; recuperación de extremo a extremo NO aprobada. Próximo cuando usuario retome: un enlace nuevo pedido y abierto exclusivamente en mismo navegador, sin apertura previa externa, y diagnóstico seguro de código de error si vuelve a fallar. Nunca registrar URL de enlace, verifier, contraseñas o códigos. Tres mejoras de usabilidad continúan en rama separada sin revisión visual final.
+
+
+## Recuperación Vercel: configuración confirmada — 19/11
+
+- Propietario guardó Auth URL Configuration. Comprobación visual de la página abierta Supabase: Site URL https://wow-forever-addons.vercel.app, Save changes deshabilitado, Redirect URLs contiene exactamente https://wow-forever-addons.vercel.app/administracion/restablecer. No comodines ni claves, lectura sin modificar ajustes.
+- Se publica exclusivamente permiso de origen para recuperación y test regresión; rama de tres mejoras permanece independiente. No correo enviado por agente ni acceso a contraseña/códigos. Después del despliegue: comprobar formulario habilitado en web real y propietario solicita UN correo nuevo desde mismo navegador, completa MFA y cambio manualmente.
+- Validación previa86 Angular, build,1 SSR,2 empaquetado PASS. No cambiar PKCE/MFA ni conceder permisos nuevos. No declarar recuperación aprobada hasta cambio y nuevo login confirmados.
 
 
 ## Recuperación en dominio alojado — en curso19/11
