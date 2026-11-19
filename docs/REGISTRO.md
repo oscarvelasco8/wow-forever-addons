@@ -1,5 +1,13 @@
 # Registro de trabajo
 
+## Todas las mejoras publicadas — cierre19/11
+
+- main desplegado da68668e86d7a75bbf112d0c82214ad407b5497d, status Vercel success. Sesión recordada, actualización del catálogo y publicación guiada integradas, conservando origen de recuperación Vercel y controles MFA/RLS. Ya no están solo en rama de pruebas.
+- Smoke alojado18/18 PASS. Rutas /administracion/addons/nuevo y /administracion/addons/:id/preparar200, no-store/noindex, ruta guiada presente en bundle real. Esto prueba entrega del paquete, no creación/publicación autenticada nueva por agente. Propietario revisará recorrido real.
+- Revisión visual local de ambos pasos y móvil con datos de ejemplo documentada en capturas anteriores de esta sesión; no confundir con sesión administrativa real. No se modificó/publicó contenido remoto. Recuperación por correo continúa aplazada, Stripe desactivado.
+- Main del worktree auxiliar avanzado por fast-forward tras preservar notas locales en stash «Continuity notes preserved before integrating all verified changes»; no se descartaron archivos del usuario. Fuente y documentos integrados contienen estado actual; stash es respaldo histórico, no una mejora pendiente. Auxiliar4201 detenido. Siguiente: propietario recarga web y prueba creación → ZIP → Publicar addon, retorno a gestión y actualización sin recarga.
+
+
 ## Todas las mejoras listas para subir — 19/11
 
 - Usuario solicita subir TODOS los cambios y comprobarlos él. Integrados main0ee9ab3 (sesión) y7774aeb (origen recuperación) en rama de mejoras. Conflictos de documentación conservan notas de ambas ramas; test logout de semántica idéntica conserva versión formateada. No se pierde retorno Vercel ni footer /administracion.
