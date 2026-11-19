@@ -1,5 +1,22 @@
 # Registro de trabajo
 
+## Recuperación Vercel: configuración confirmada — 19/11
+
+- Propietario guardó Auth URL Configuration. Comprobación visual de la página abierta Supabase: Site URL https://wow-forever-addons.vercel.app, Save changes deshabilitado, Redirect URLs contiene exactamente https://wow-forever-addons.vercel.app/administracion/restablecer. No comodines ni claves, lectura sin modificar ajustes.
+- Se publica exclusivamente permiso de origen para recuperación y test regresión; rama de tres mejoras permanece independiente. No correo enviado por agente ni acceso a contraseña/códigos. Después del despliegue: comprobar formulario habilitado en web real y propietario solicita UN correo nuevo desde mismo navegador, completa MFA y cambio manualmente.
+- Validación previa86 Angular, build,1 SSR,2 empaquetado PASS. No cambiar PKCE/MFA ni conceder permisos nuevos. No declarar recuperación aprobada hasta cambio y nuevo login confirmados.
+
+
+## Recuperación en dominio alojado — en curso19/11
+
+- Usuario vuelve a casa y deja revisión de las tres mejoras para más tarde. Rama codex/usabilidad-administracion sigue sin integrar, main continúa ba14d4a. Autoriza continuar recuperación y confirma tener correo/autenticador; no pedir contraseñas, enlaces o códigos.
+- Causa comprobada: recoveryConfigured solo permitía origen LAN antiguo. Preparado permiso exacto adicional https://wow-forever-addons.vercel.app, conservando restricción contra previews arbitrarios. requestRecovery genera /administracion/restablecer en ese mismo origen.
+- Trabajo aislado de main en codex/recuperacion-produccion, worktree LOCALAPPDATA/WoWForeverAddons/worktrees/recovery; node_modules junction local, sin copiar .env ni claves. Root sigue rama de usabilidad y notas locales preservadas. No mezclar las tres mejoras que usuario pospone.
+- Nuevo test confirma retorno Vercel y deniega dominio preview. Angular86/86, build, SSR1/1 y empaquetado2/2 aprobados. No desplegado todavía. Se mantiene validación PKCE de recuperación, pertenencia y MFA antes de updateUser; no cambios SQL ni credenciales.
+- Pendiente información solicitada por herramienta: Site URL y Redirect URLs de Authentication → URL Configuration de Supabase, solo direcciones públicas, para comprobar allowlist del retorno exacto. MCP disponible no expone ajuste Auth URL. No solicitar otro correo hasta verificar allowlist y desplegar corrección.
+- Fuentes oficiales consultadas passwords y redirect-urls Supabase. Capturas finales deberán omitir enlaces/códigos y contraseñas; usuario realiza envío de correo, MFA y cambio de contraseña manualmente. No dar recuperación por comprobada hasta resultado real.
+
+
 ## Organización del panel — revisión visual19/11
 
 - Propietario señala desorden en entrega anterior y exige comprobar interfaz en web abierta antes de entregar. Guardado explícitamente en AGENTS.md: no sustituir revisión visual por build/HTTP ni afirmar comprobación sin acceso.

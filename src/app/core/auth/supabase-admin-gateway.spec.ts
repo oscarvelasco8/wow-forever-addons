@@ -37,6 +37,16 @@ describe('Supabase administrator adapter', () => {
     });
   });
 
+  it('uses the exact deployed recovery origin without allowing arbitrary preview deployments', async () => {
+    vi.stubGlobal('location', { origin: 'https://wow-forever-addons.vercel.app' });
+    mock.auth.resetPasswordForEmail.mockResolvedValue({ error: null });
+    await gateway.requestRecovery('owner@example.test');
+    expect(mock.auth.resetPasswordForEmail).toHaveBeenCalledWith('owner@example.test', {
+      redirectTo: 'https://wow-forever-addons.vercel.app/administracion/restablecer',
+    });
+    vi.stubGlobal('location', { origin: 'https://wow-forever-addons-preview.vercel.app' });
+    expect(gateway.recoveryConfigured).toBe(false);
+  });
   it('does not send recovery mail from an origin absent from the allowlist', async () => {
     vi.stubGlobal('location', { origin: 'https://unconfigured.example.test' });
     await expect(gateway.requestRecovery('owner@example.test')).rejects.toThrow();
