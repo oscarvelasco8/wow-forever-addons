@@ -49,13 +49,12 @@
             @if (data.releases.length) {
               <label
                 >Versión preparada<select
-                  [value]="selected()"
                   (change)="selected.set($any($event.target).value)"
                 >
-                  <option value="">Nueva versión a partir del ZIP</option>
+                  <option value="" [selected]="!selected()">Nueva versión a partir del ZIP</option>
                   @for (r of data.releases; track r.id) {
                     @if (r.status !== 'archived') {
-                      <option [value]="r.id">
+                      <option [value]="r.id" [selected]="selected() === r.id">
                         {{ r.version }}{{ r.file_path ? ' · ZIP guardado' : ' · falta ZIP' }}
                       </option>
                     }

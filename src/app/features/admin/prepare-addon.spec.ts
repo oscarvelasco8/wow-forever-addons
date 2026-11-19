@@ -84,6 +84,7 @@ describe('Prepare and publish screen', () => {
   it('never publishes on entry or without the explicit permission checkbox', async () => {
     const f = TestBed.createComponent(PrepareAddon);
     await f.whenStable();
+    expect((f.nativeElement.querySelector('select') as HTMLSelectElement).value).toBe('r');
     await f.componentInstance.finish(true);
     expect(gateway.publishPreparedAddon).not.toHaveBeenCalled();
     expect(f.componentInstance.error()).toContain('permiso');

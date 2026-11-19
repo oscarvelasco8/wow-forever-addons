@@ -1,5 +1,13 @@
 # Registro de trabajo
 
+## Todas las mejoras listas para subir — 19/11
+
+- Usuario solicita subir TODOS los cambios y comprobarlos él. Integrados main0ee9ab3 (sesión) y7774aeb (origen recuperación) en rama de mejoras. Conflictos de documentación conservan notas de ambas ramas; test logout de semántica idéntica conserva versión formateada. No se pierde retorno Vercel ni footer /administracion.
+- Revisión visual ahora posible en navegador integrado: paso1 ficha sin licencia obligatoria y paso2 ZIP/publicar, con datos de ejemplo (sin Supabase). Revisados escritorio y móvil390px; scrollWidth375<=390. Capturas fase7-nuevo-addon-simplificado-preview.jpg, fase7-publicacion-guiada-preview-escritorio.jpg y fase7-publicacion-guiada-preview-movil.jpg. Son fixtures, no publicación administrativa real. Viewport temporal restaurado y pestaña auxiliar cerrada.
+- Revisión detectó selector que mostraba Nueva versión aunque el modelo había elegido una existente. Corregidos selected de opciones y regresión DOM real comprueba selección. Check final20 API/24 SQL/99 Angular/1 SSR/2 empaquetado PASS, check:release14/14 y diff --check. Inicial322,73kB/89,44kB estimados.
+- Se publica conjunto ya integrado para despliegue automático en main. El propietario comprobará flujos completos; agente no publica ni elimina contenidos remotos. Recuperación por correo permanece pendiente por decisión del propietario; habilitación del origen se conserva. Stripe desactivado. Auxiliar4201 se detendrá tras revisión.
+
+
 ## Sesión: confirmación del propietario — 19/11
 
 - Propietario responde «Funciona correctamente» tras pedir primer login/MFA y prueba de sesión recordada. Registrar como confirmación manual de usuario, no como prueba autónoma de todas las pestañas.
