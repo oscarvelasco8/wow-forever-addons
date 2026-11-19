@@ -3,6 +3,7 @@ import { adminGuard } from './core/auth/admin.guard';
 import { draftLeaveGuard } from './core/catalog/draft-leave.guard';
 
 export const routes: Routes = [
+  {path:'administracion/addons/nuevo',canActivate:[adminGuard],canDeactivate:[draftLeaveGuard],title:'Nuevo addon | WoW Forever Addons',loadComponent:()=>import('./features/admin/new-addon').then(m=>m.NewAddon)},
   { path:'404',title:'Página no encontrada | WoW Forever Addons',loadComponent:()=>import('./features/not-found/not-found').then(module=>module.NotFound) },
   {
     path:'administracion/categorias',canActivate:[adminGuard],canDeactivate:[draftLeaveGuard],title:'Categorías | WoW Forever Addons',

@@ -1,4 +1,5 @@
 <section class="container section management">
+  <p><a class="button" routerLink="/administracion/addons/nuevo">Nuevo addon ↗</a></p>
   <p><a routerLink="/administracion/categorias">Gestionar categorías ↗</a></p>
   <header><div><p class="eyebrow">Administración</p><h1>Área de gestión.</h1><p>Prepara las próximas publicaciones de WoW Forever Addons.</p></div><button class="button secondary" [disabled]="busy() || testing()" (click)="logout()">Cerrar sesión</button></header>
   <section aria-labelledby="drafts-title"><div class="section-heading"><div><p class="eyebrow">Colección editorial</p><h2 id="drafts-title">Todos los addons</h2></div><button class="button secondary" (click)="loadDrafts()" [disabled]="loading() || testing()">Actualizar listado</button></div>

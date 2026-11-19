@@ -117,3 +117,5 @@ npm.cmd run start:api (loopback 127.0.0.1:3001), y Angular con proxy a /api. Vis
 # Reemplazo y eliminación de borradores — actualización19/11
 
 UI preparada localmente con revisión, motivo, casilla, CAS y limpieza recuperable. Protección SQL/Storage aplicada selectivamente en migración20261119144321, tipos regenerados. Contrato ya instalado; si falta o falla sesión el panel se cierra antes de blobs. Detalles/evidencia en [ARCHIVOS.md](ARCHIVOS.md). Validación SQL remota revertida aprobada sin blobs; nueva prueba HTTP del propietario con archivos desechables sigue pendiente. Las pruebas históricas no validan este nuevo flujo. No se ha eliminado ningún archivo remoto ni desplegado la UI.
+
+Nuevo addon: botón en gestión y ruta /administracion/addons/nuevo. Solo crea borrador privado sin aprobación; abre editor para completar archivos y textos. Creación protegida por membresía/MFA y UUID por intento; ante respuesta incierta comprobar listado antes de repetir. Validación real alojada con propietario pendiente.

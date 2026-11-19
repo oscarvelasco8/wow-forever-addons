@@ -193,6 +193,9 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
   async editorialAction(command: EditorialCommand) { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).editorialAction(client,command); }
   async editorialImageBlob(addonId: string,id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).editorialImageBlob(client,addonId,id); }
   async loadDraft(id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).loadDraft(client, id); }
+  async createDraft(id: string, input: DraftFields) {
+    const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).createDraft(client, id, input);
+  }
   async saveDraft(id: string, updatedAt: string, input: DraftFields) {
     const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).saveDraft(client, id, updatedAt, input);
   }

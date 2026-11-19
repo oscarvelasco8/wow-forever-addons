@@ -4,6 +4,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { App } from '../../src/app/app';
 import { Editorial } from '../../src/app/features/admin/editorial';
+import { NewAddon } from '../../src/app/features/admin/new-addon';
 import { SupabaseAdminGateway } from '../../src/app/core/auth/supabase-admin-gateway';
 import type { EditorialBundle } from '../../src/app/core/catalog/admin-editorial';
 
@@ -21,9 +22,11 @@ const fixture:EditorialBundle={
 };
 const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320"><rect width="640" height="320" fill="#17231d"/><g fill="none" stroke="#364c3c" stroke-width="1"><path d="M0 80h640M0 160h640M0 240h640M160 0v320M320 0v320M480 0v320"/></g><path d="M65 235Q180 90 290 160T575 65" fill="none" stroke="#c9aa71" stroke-width="5" stroke-dasharray="9 9"/><g fill="#c9aa71"><circle cx="65" cy="235" r="8"/><circle cx="290" cy="160" r="8"/><circle cx="575" cy="65" r="8"/></g><text x="32" y="42" fill="#d8d7bc" font-family="Georgia" font-size="22">Imagen de ejemplo</text></svg>';
 bootstrapApplication(App,{providers:[
-  provideRouter([{path:'administracion/addons/:id/publicacion',component:Editorial},{path:'**',redirectTo:`administracion/addons/${addonId}/publicacion`}]),
+  provideRouter([{path:'administracion/addons/nuevo',component:NewAddon},{path:'administracion/addons/:id/publicacion',component:Editorial},{path:'**',redirectTo:`administracion/addons/${addonId}/publicacion`}]),
   {provide:SupabaseAdminGateway,useValue:{
     loadEditorial:async()=>structuredClone(fixture),
+    loadCategories:async()=>({categories:[structuredClone(fixture.category)]}),
+    createDraft:async()=>{throw new Error('Esta vista previa no guarda cambios.');},
     editorialImageBlob:async()=>new Blob([svg],{type:'image/svg+xml'}),
     editorialAction:async()=>{throw new Error('Esta vista previa no guarda cambios.');},
   }},

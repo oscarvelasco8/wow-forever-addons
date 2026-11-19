@@ -1,5 +1,15 @@
 # Memoria de continuidad
 
+## Nuevo addon en borrador — 19/11
+
+- Propietario confirma login alojado correcto; aviso conexión pendiente no impidió acceso. Solicita creación de addons y autoriza implementarla ahora.
+- Botón Nuevo addon en gestión y ruta protegida /administracion/addons/nuevo, anterior a :id; guard admin/MFA y salida con cambios. Formulario nombre/slug/categoría/autoría/resumen/licencia pendiente, sin publicación implícita. Tras crear abre editor existente para textos, imágenes y versiones.
+- Inserción SDK con UUID fijo por intento, campos permitidos y status draft/distribution_approved false/published_at null forzados. Duplicado de dirección conserva formulario. Respuesta incierta consulta únicamente UUID; no repite inserción y bloquea nuevo envío si no puede confirmarla. Error de navegación conserva enlace al borrador creado.
+- Inspección remota solo lectura confirma INSERT autenticado condicionado a private.is_admin(), que exige aal2 y pertenencia. No migración ni privilegios nuevos ni filas creadas por agente. Documentación SDK/changelog revisada. No prueba HTTP de creación con sesión del propietario todavía.
+- Check completo20 API/24 SQL/85 Angular/1 SSR/2 empaquetado PASS. Nuevas pruebas: payload sin publicación, respuesta incierta sin duplicar, validación, no escritura al abrir y salida con cambios. Compilación visual separada aprobada tras corregir fixture.category; nunca acceso remoto desde fixture.
+- Captura en preparación de vista aislada, datos de ejemplo. Capturas anteriores conservadas. Próximo: subir arreglo autorizado, comprobar ruta alojada y propietario crea su primer addon real como borrador. Recuperación de contraseña pendiente; Stripe desactivado. Sin Lua ni cambios SQL/Storage.
+
+
 ## Rutas 404 alojadas — 19/11
 
 - Sustituida configuración Vercel de rewrites/headers por routes ordenadas: cabeceras globales/administrativas, SSR y CSR explícitos, filesystem para archivos y funciones existentes, cierre con404.html/status404/noindex/no-store. No convierte rutas válidas ni API existentes en404.
@@ -382,3 +392,7 @@ Subida completada y SHA remoto verificado: main 1c78b5ca15f066c3a63a0e520cecc1c0
 No nueva captura Windows de entrega: Chrome muestra resultado de autenticación de Git Credential Manager y no se automatiza esa pantalla. Informe HTML local de entrega disponible; captura anterior del paquete conservada. Auxiliar4203 detenido. Se guardan en commit documental los resultados de la subida.
 
 Resultado alojado tras push0e14fc9 y despliegue automático:17/18 comprobaciones PASS. public-config/catalog200; Checkout200 enabled=false/mode=test; status/webhook405 por GET; download/image404 sin identificador; sitemap503 esperado por dominio canónico sin configurar. Todos los500 anteriores desaparecen. Solo /no-existe mantiene200; pendiente independiente, no se declara aceptación integral. Pruebas locales20 API/24 SQL/80 Angular/1 SSR/1 empaquetado aprobadas. Comprobaciones anónimas de solo lectura, no descarga positiva ni sesión administrativa.
+
+Resultado confirmado en producción tras e28931b:18/18 comprobaciones HTTP anónimas PASS. /no-existe404, inicio/catalogo/apoyar200, administración no-store/noindex, API funcionales y Stripe desactivado. No equivale a probar sesión administrativa, descarga positiva, correo o recuperación. Se prepara captura de página pública alojada, sin login ni fixtures.
+
+Captura fase9-404-vercel-real.jpg comprobada visualmente en Chrome: página pública realmente alojada en /no-existe, no fixture ni sesión administrativa. HTTP404 confirmado por petición independiente. Capturas anteriores preservadas. Siguiente: revisión visual y acceso/MFA del propietario en entorno alojado; recuperación sigue pendiente.

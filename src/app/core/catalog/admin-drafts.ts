@@ -8,6 +8,20 @@ export type ReleaseFields = Pick<DraftRelease, 'version' | 'game_version' | 'int
 export interface DraftBundle { addon: DraftAddon; releases: DraftRelease[]; categories: Tables<'categories'>[]; }
 export class DraftConflictError extends Error {}
 export class DraftValidationError extends Error {}
+export class DraftCreationUncertainError extends Error {}
+
+export async function createDraft(client: SupabaseClient<Database>, id: string, input: DraftFields): Promise<DraftAddon> {
+  const fields = draftFields(input);
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)) { throw new DraftValidationError(); }
+  const result = await client.from('addons').insert({ ...fields, id, status: 'draft', distribution_approved: false, published_at: null }).select('*').single();
+  if (!result.error && result.data) { return result.data; }
+  if (result.error?.code === '23505') { throw new Error('Esa dirección ya está en uso. Elige otra dirección para la ficha.'); }
+  // A lost response can follow a committed insert. Read by the attempt's UUID,
+  // never repeat an insert automatically or infer success from a matching slug.
+  const saved = await client.from('addons').select('*').eq('id', id).eq('status', 'draft').maybeSingle();
+  if (!saved.error && saved.data) { return saved.data; }
+  throw new DraftCreationUncertainError();
+}
 
 function text(value: string, max: number, required = false): string {
   if (typeof value !== 'string' || value.length > max || (required && !value.trim())) { throw new DraftValidationError(); }

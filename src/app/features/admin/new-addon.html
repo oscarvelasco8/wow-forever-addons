@@ -1,0 +1,21 @@
+<section class="container section editor">
+ <a routerLink="/administracion">← Volver a gestión</a>
+ <header><p class="eyebrow">Catálogo · Administración</p><h1>Nuevo addon.</h1><p>Crea una ficha privada. Después podrás completar sus textos, imágenes y versiones.</p></header>
+ <div class="draft-note"><strong>Se guardará como borrador</strong><span>No aparecerá en el catálogo ni tendrá archivos públicos. La aprobación y la publicación son pasos independientes.</span></div>
+ @if(error()){<p class="message error" role="alert">{{error()}}</p>}
+ @if(created()){<p role="status">Borrador creado. <a [routerLink]="['/administracion/addons',created()]">Abrir editor ↗</a></p>}
+ @if(loading()){<p role="status">Cargando categorías…</p>}
+ @else if(!categories().length){<p>No hay categorías disponibles. <a routerLink="/administracion/categorias">Gestionar categorías</a></p><button class="button secondary" (click)="load()">Volver a cargar</button>}
+ @else {
+ <form class="panel" [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="saving()" novalidate>
+ <h2>Datos iniciales</h2><p>Todos los campos son obligatorios. Podrás editarlos después.</p>
+ <fieldset class="asset-body" [disabled]="saving() || uncertain() || !!created()"><div class="fields">
+ <label>Nombre *<input formControlName="name" maxlength="100" [attr.aria-invalid]="form.controls.name.touched && form.controls.name.invalid"></label>
+ <label>Dirección de la ficha *<input formControlName="slug" maxlength="100" spellcheck="false" [attr.aria-invalid]="form.controls.slug.touched && form.controls.slug.invalid"><small>Minúsculas, números y guiones: /addons/{{form.controls.slug.value}}</small></label>
+ <label>Categoría *<select formControlName="category_id"><option value="">Selecciona una categoría</option>@for(category of categories();track category.id){<option [value]="category.id">{{category.name}}{{category.is_visible?'':' (oculta)'}}</option>}</select></label>
+ <label>Autoría *<input formControlName="author_name" maxlength="150"></label>
+ <label class="wide">Resumen *<textarea formControlName="summary" maxlength="300" rows="3"></textarea><small>{{form.controls.summary.value.length}}/300 caracteres</small></label>
+ <label class="wide">Licencia o estado de revisión *<input formControlName="license_name" maxlength="150"><small>Indicar una licencia no aprueba la distribución.</small></label>
+ </div><button class="button" type="submit">{{saving()?'Creando…':'Crear borrador y continuar'}}</button></fieldset>
+ </form>}
+</section>
