@@ -604,3 +604,5 @@ Cierre20/11: main cdb29e3b5e4a304db4da33859df2ff83c1a81be3 subido sin force, Ver
 Autor o equipo deja de ser obligatorio al crear y editar borradores. Si se deja vacío o solo con espacios, se guarda Equipo WoW Forever; nombres ya existentes se conservan. Validación de150 caracteres intacta. No se cambia esquema ni permisos de Supabase. La publicación guiada sigue requiriendo solo confirmación de permiso, sin selector de licencia pública. Aportaciones voluntarias sin ventajas.
 
 npm.cmd run check PASS20 API/25 SQL/106 Angular/1 SSR/2 empaquetado y check:release14/14; prueba existente de creación ahora omite autor y comprueba valor predeterminado. Revisión visual del formulario en navegador, fixture sin Supabase, captura fase7-autor-opcional-preview.jpg; no creación remota por agente. Auxiliar4201 detenido.
+
+Cierre autoría20/11: push main1e2e47a verificado, Vercel success; node scripts/verify-hosted.mjs https://wow-forever-addons.vercel.app/ PASS18/18 después del despliegue. No alteración de contenido existente. Captura preservada y auxiliar detenido.
