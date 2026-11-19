@@ -1,5 +1,21 @@
 # Registro de trabajo
 
+## Corrección del empaquetado ESM — 19/11
+
+- Logs alojados aportados por propietario confirman ERR_MODULE_NOT_FOUND: api/catalog.js conservaba import a server/config/supabase.ts. Fallo de compilación/empaquetado, no credenciales. Config raíz usada por Vercel incorpora rewriteRelativeImportExtensions:true; conserva imports .ts para ejecución local y emite rutas .js al compilar. Referencia oficial: https://www.typescriptlang.org/tsconfig/rewriteRelativeImportExtensions.html.
+- Nueva regresión tests/packaging/backend.test.mjs transpila api/server con opciones raíz, comprueba ausencia de imports relativos .ts y carga todos los handlers JS en proceso separado sin fuentes TypeScript, sin claves de entorno. PASS. Incluida en npm run check y por tanto CI; antes solo se probaban fuentes con Node y no este límite de compilación.
+- Se subirá la corrección al repositorio para despliegue automático del proyecto Vercel ya autorizado; comprobar HTTP alojado después. No cambiar variables, Auth, SQL o Storage. Pendientes independientes: ruta inexistente200, recuperación de contraseña y prueba positiva de descarga/publicación real. Stripe permanece desactivado. No dar fallo alojado por resuelto hasta comprobar respuesta tras desplegar.
+
+
+## Primer despliegue Vercel — revisión en curso19/11
+
+- Propietario creó y desplegó proyecto con variables públicas Supabase y flags Stripe false. URL https://wow-forever-addons.vercel.app/ recibida del propietario. Ahora sí hay despliegue, pero no aceptación de funcionamiento integral.
+- HTTP público: inicio/catalogo/apoyar200 noindex; acceso y recuperar200 con no-store/noindex; categorias200 CSR con cabeceras administrativas. Health200. Ficha Rumbo404 SSR coherente con borrador. Robots200. Ruta inexistente responde200 (pendiente corregir).
+- Fallan500 en ejecución public-config/catalog/support-checkout/support-status/support-webhook/download/image/sitemap. No confundir con error de build ni con falta de dominio. No hay consultas POST, sesión administrativa o cambios remotos. API health funciona y render SSR responde; patrón apunta a carga de módulos, pendiente confirmar logs.
+- Solicitado propietario mensaje de ejecución /api/catalog en Vercel Logs, sin secretos. No se hará despliegue especulativo ni cambio de claves. Añadido scripts/verify-hosted.mjs: solo GET sin cookies, imprime estado/expectativa, nunca configuración ni cuerpos. Expectativas actuales: Rumbo borrador404, Stripe desactivado, sitemap503 mientras no haya dominio canónico.
+- Capturas del propietario muestran creación y éxito de build; no prueban el backend. Suite local anterior no detectó este fallo de empaquetado alojado. Recuperación de contraseña pendiente. Sin cambios SQL/Storage ni Lua. No se publica otro commit hasta concretar corrección.
+
+
 ## Publicación del código en GitHub — 19/11/2026
 
 - Usuario autoriza continuar tras revisar importación Vercel de oscarvelasco8/wow-forever-addons, rama main, raíz ./ y preset Other. Cuenta Vercel creada por propietario; aún no se pulsa Deploy ni se configuran secretos alojados.

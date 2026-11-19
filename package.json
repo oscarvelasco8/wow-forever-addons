@@ -18,13 +18,14 @@
     "typecheck:api": "tsc --project tsconfig.api.json",
     "test:db": "node --test tests/database/*.test.mjs",
     "test:ssr": "node --test tests/ssr/*.test.mjs",
+    "test:packaging": "node --test tests/packaging/*.test.mjs",
     "verify:supabase": "node --env-file=.env scripts/verify-supabase.ts",
     "verify:storage": "node --env-file=.env scripts/verify-storage.ts",
     "verify:webhook:local": "node scripts/verify-support-local.ts",
     "stripe:listen": "node scripts/stripe-listener.mjs",
     "stripe:recover": "node scripts/recover-stripe-events.mjs",
     "check:release": "node scripts/check-release.mjs",
-    "check": "npm run typecheck:api && npm run test:api && npm run test:db && npm test && npm run build && npm run test:ssr"
+    "check": "npm run typecheck:api && npm run test:api && npm run test:db && npm test && npm run build && npm run test:ssr && npm run test:packaging"
   },
   "private": true,
   "packageManager": "npm@11.19.1",
