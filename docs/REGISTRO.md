@@ -425,3 +425,7 @@
 Captura de esta revisión guardada y comprobada visualmente: docs/capturas/fase9-paquete-revisado.jpg. Informe de comprobaciones locales reales; no vista administrativa ni despliegue. Auxiliar4203 detenido;4200/3001 conservados. Se preservan capturas anteriores.
 
 Primer push rechazado por GitHub Push Protection: falso positivo en clave live sintética de tests/api/support-checkout.test.ts. Ninguna coincidencia con claves privadas locales. Se construyen claves sintéticas por prefijo separado, se repite test Checkout y se corrige el commit aún no publicado, sin omitir protección ni force-push.
+
+Subida completada y SHA remoto verificado: main 1c78b5ca15f066c3a63a0e520cecc1c0db16d4ab. Checkout tests2/2 tras corregir fixtures; comprobación paquete14/14. GitHub aceptó push sin excepción de protección y sin force. gh no está instalado; no se afirma CI remota aprobada. Vercel aún no desplegado. Informe local de entrega fase9-github-informe.html; captura se intentará con control Windows, no Dashboard. Recargar importación antes de configurar build y variables.
+
+No nueva captura Windows de entrega: Chrome muestra resultado de autenticación de Git Credential Manager y no se automatiza esa pantalla. Informe HTML local de entrega disponible; captura anterior del paquete conservada. Auxiliar4203 detenido. Se guardan en commit documental los resultados de la subida.
