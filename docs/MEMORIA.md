@@ -1,5 +1,13 @@
 # Memoria de continuidad
 
+## Organización del panel — revisión visual19/11
+
+- Propietario señala desorden en entrega anterior y exige comprobar interfaz en web abierta antes de entregar. Guardado explícitamente en AGENTS.md: no sustituir revisión visual por build/HTTP ni afirmar comprobación sin acceso.
+- Reordenado panel: título/introducción y cierre de sesión en cabecera; Nuevo addon y categorías juntos debajo; listado con actualizar alineado, tarjetas de ancho completo y acciones juntas. Responsive apila grupos a950/650px. No cambia lógica ni datos.
+- Build producción y preview compilados. Chrome observado visualmente muestra vista aislada loopback4201 con datos ficticios, no panel remoto conectado; captura fase7-panel-organizado-preview.jpg guardada, etiquetas de ejemplo visibles. Se verificó composición en escritorio; no afirmar sesión administrativa real ni móvil todavía.
+- Propietario dice Chrome abierto. Única ventana controlable observada aún en vista previa local; comprobar panel remoto tras desplegar y, si requiere login, usuario debe autenticarse. No automatizar credenciales/MFA. Se sube corrección para poder revisar web alojada, no se considera entrega visual final hasta inspección.
+
+
 ## Nuevo addon en borrador — 19/11
 
 - Propietario confirma login alojado correcto; aviso conexión pendiente no impidió acceso. Solicita creación de addons y autoriza implementarla ahora.
@@ -396,3 +404,5 @@ Resultado alojado tras push0e14fc9 y despliegue automático:17/18 comprobaciones
 Resultado confirmado en producción tras e28931b:18/18 comprobaciones HTTP anónimas PASS. /no-existe404, inicio/catalogo/apoyar200, administración no-store/noindex, API funcionales y Stripe desactivado. No equivale a probar sesión administrativa, descarga positiva, correo o recuperación. Se prepara captura de página pública alojada, sin login ni fixtures.
 
 Captura fase9-404-vercel-real.jpg comprobada visualmente en Chrome: página pública realmente alojada en /no-existe, no fixture ni sesión administrativa. HTTP404 confirmado por petición independiente. Capturas anteriores preservadas. Siguiente: revisión visual y acceso/MFA del propietario en entorno alojado; recuperación sigue pendiente.
+
+Despliegue d8c9357 comprobado: ruta nueva200 con no-store/noindex y ruta presente en bundle alojado (nombre de componente minificado no localizado por búsqueda literal). Smoke público18/18 PASS. Creación real con sesión administrativa queda pendiente de que propietario use Nuevo addon; no afirmar INSERT real probado.

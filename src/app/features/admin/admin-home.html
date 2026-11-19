@@ -1,13 +1,12 @@
 <section class="container section management">
-  <p><a class="button" routerLink="/administracion/addons/nuevo">Nuevo addon ↗</a></p>
-  <p><a routerLink="/administracion/categorias">Gestionar categorías ↗</a></p>
   <header><div><p class="eyebrow">Administración</p><h1>Área de gestión.</h1><p>Prepara las próximas publicaciones de WoW Forever Addons.</p></div><button class="button secondary" [disabled]="busy() || testing()" (click)="logout()">Cerrar sesión</button></header>
-  <section aria-labelledby="drafts-title"><div class="section-heading"><div><p class="eyebrow">Colección editorial</p><h2 id="drafts-title">Todos los addons</h2></div><button class="button secondary" (click)="loadDrafts()" [disabled]="loading() || testing()">Actualizar listado</button></div>
+  <nav class="management-actions" aria-label="Acciones de gestión"><a class="button" routerLink="/administracion/addons/nuevo">Nuevo addon ↗</a><a class="button secondary" routerLink="/administracion/categorias">Gestionar categorías ↗</a></nav>
+  <section aria-labelledby="drafts-title"><div class="collection-heading"><div><p class="eyebrow">Colección editorial</p><h2 id="drafts-title">Todos los addons</h2></div><button class="button secondary" (click)="loadDrafts()" [disabled]="loading() || testing()">Actualizar listado</button></div>
     @if (loading()) { <p role="status">Cargando borradores…</p> }
     @else if (loadError()) { <p class="error" role="alert">{{ loadError() }}</p> }
     @else {
       <div class="draft-grid">@for (draft of drafts(); track draft.id) {
-        <article><span class="eyebrow">{{draft.status === 'published' ? 'Publicado' : draft.status === 'archived' ? 'Retirado' : 'Borrador · Sin publicar'}}</span><h3>{{ draft.name }}</h3><p>{{ draft.summary }}</p><p class="muted">{{ draft.distribution_approved ? 'Revisión de distribución registrada' : 'Distribución pendiente de revisión' }}</p>@if(draft.status==='draft'){<p><a class="button secondary" [routerLink]="['/administracion/addons', draft.id]">Editar borrador ↗</a></p>}<a class="button secondary" [routerLink]="['/administracion/addons',draft.id,'publicacion']">Revisión y publicación ↗</a></article>
+        <article><div class="addon-copy"><span class="eyebrow">{{draft.status === 'published' ? 'Publicado' : draft.status === 'archived' ? 'Retirado' : 'Borrador · Sin publicar'}}</span><h3>{{ draft.name }}</h3><p>{{ draft.summary }}</p><p class="muted">{{ draft.distribution_approved ? 'Revisión de distribución registrada' : 'Distribución pendiente de revisión' }}</p></div><div class="addon-actions">@if(draft.status==='draft'){<a class="button secondary" [routerLink]="['/administracion/addons', draft.id]">Editar borrador ↗</a>}<a class="button secondary" [routerLink]="['/administracion/addons',draft.id,'publicacion']">Revisión y publicación ↗</a></div></article>
       } @empty { <p>No hay addons en la colección.</p> }</div>
     }
   </section>

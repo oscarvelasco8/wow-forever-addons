@@ -1,5 +1,13 @@
 # Registro de trabajo
 
+## Organización del panel — revisión visual19/11
+
+- Propietario señala desorden en entrega anterior y exige comprobar interfaz en web abierta antes de entregar. Guardado explícitamente en AGENTS.md: no sustituir revisión visual por build/HTTP ni afirmar comprobación sin acceso.
+- Reordenado panel: título/introducción y cierre de sesión en cabecera; Nuevo addon y categorías juntos debajo; listado con actualizar alineado, tarjetas de ancho completo y acciones juntas. Responsive apila grupos a950/650px. No cambia lógica ni datos.
+- Build producción y preview compilados. Chrome observado visualmente muestra vista aislada loopback4201 con datos ficticios, no panel remoto conectado; captura fase7-panel-organizado-preview.jpg guardada, etiquetas de ejemplo visibles. Se verificó composición en escritorio; no afirmar sesión administrativa real ni móvil todavía.
+- Propietario dice Chrome abierto. Única ventana controlable observada aún en vista previa local; comprobar panel remoto tras desplegar y, si requiere login, usuario debe autenticarse. No automatizar credenciales/MFA. Se sube corrección para poder revisar web alojada, no se considera entrega visual final hasta inspección.
+
+
 ## Nuevo addon en borrador — 19/11
 
 - Propietario confirma login alojado correcto; aviso conexión pendiente no impidió acceso. Solicita creación de addons y autoriza implementarla ahora.
@@ -470,3 +478,5 @@ Resultado confirmado en producción tras e28931b:18/18 comprobaciones HTTP anón
 Captura fase9-404-vercel-real.jpg comprobada visualmente en Chrome: página pública realmente alojada en /no-existe, no fixture ni sesión administrativa. HTTP404 confirmado por petición independiente. Capturas anteriores preservadas. Siguiente: revisión visual y acceso/MFA del propietario en entorno alojado; recuperación sigue pendiente.
 
 Captura nueva no obtenida: Chrome se abrió en selector de perfiles; intento de abrir invitado devolvió coordinate input geometry is unavailable. No se automatizó login ni perfil personal. Vista aislada compilada disponible en loopback4201; capturas anteriores preservadas. Se entrega funcionalidad para comprobar con sesión del propietario.
+
+Despliegue d8c9357 comprobado: ruta nueva200 con no-store/noindex y ruta presente en bundle alojado (nombre de componente minificado no localizado por búsqueda literal). Smoke público18/18 PASS. Creación real con sesión administrativa queda pendiente de que propietario use Nuevo addon; no afirmar INSERT real probado.
