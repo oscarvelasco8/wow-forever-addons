@@ -25,7 +25,7 @@ export class DraftEditor {
     name: ['', [Validators.required, Validators.maxLength(100)]],
     slug: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(/^[a-z0-9]+(-[a-z0-9]+)*$/)]],
     category_id: ['', Validators.required], summary: ['', [Validators.required, Validators.maxLength(300)]],
-    description: ['', Validators.maxLength(30000)], author_name: ['', [Validators.required, Validators.maxLength(150)]],
+    description: ['', Validators.maxLength(30000)], author_name: ['', Validators.maxLength(150)],
     license_name: ['', [Validators.required, Validators.maxLength(150)]], credits: ['', Validators.maxLength(30000)],
     installation_instructions: ['', Validators.maxLength(30000)],
   });

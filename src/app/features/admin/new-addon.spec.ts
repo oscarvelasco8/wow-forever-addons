@@ -12,9 +12,9 @@ describe('New addon',()=>{
  });
  it('keeps input and blocks another insert after an uncertain outcome',async()=>{
   const f=TestBed.createComponent(NewAddon);await f.whenStable();const p=f.componentInstance;
-  p.form.patchValue({name:'Prueba',slug:'prueba',category_id:id,author_name:'Autor',summary:'Resumen'});p.form.markAsDirty();
+  p.form.patchValue({name:'Prueba',slug:'prueba',category_id:id,summary:'Resumen'});p.form.markAsDirty();
   gateway.createDraft.mockRejectedValue(new DraftCreationUncertainError());await p.save();await p.save();
-  expect(gateway.createDraft).toHaveBeenCalledOnce();expect(p.uncertain()).toBe(true);expect(p.form.controls.name.value).toBe('Prueba');expect(p.dirty).toBe(true);
+  expect(gateway.createDraft).toHaveBeenCalledOnce();expect(gateway.createDraft.mock.calls[0][1].author_name).toBe('Equipo WoW Forever');expect(p.uncertain()).toBe(true);expect(p.form.controls.name.value).toBe('Prueba');expect(p.dirty).toBe(true);
  });
  it('prevents leaving during a write and warns for unsaved input',async()=>{
   const f=TestBed.createComponent(NewAddon);await f.whenStable();const p=f.componentInstance;p.saving.set(true);expect(p.canLeave()).toBe(false);p.saving.set(false);p.form.markAsDirty();const confirm=vi.spyOn(window,'confirm').mockReturnValue(false);expect(p.canLeave()).toBe(false);confirm.mockRestore();

@@ -31,7 +31,7 @@ export function draftFields(input: DraftFields): DraftFields {
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(input.slug) || !/^[0-9a-f-]{36}$/i.test(input.category_id)) { throw new DraftValidationError(); }
   return { name: text(input.name, 100, true), slug: text(input.slug, 100, true), category_id: input.category_id,
     summary: text(input.summary, 300, true), description: text(input.description, 30000),
-    author_name: text(input.author_name, 150, true), license_name: text(input.license_name, 150, true),
+    author_name: text(input.author_name, 150).trim() || 'Equipo WoW Forever', license_name: text(input.license_name, 150, true),
     credits: text(input.credits, 30000), installation_instructions: text(input.installation_instructions, 30000) };
 }
 export function releaseFields(input: ReleaseFields): ReleaseFields {

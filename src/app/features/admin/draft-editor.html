@@ -19,7 +19,7 @@
         <label>Nombre *<input formControlName="name" maxlength="100" [attr.aria-invalid]="form.controls.name.touched && form.controls.name.invalid"></label>
         <label>Dirección de la ficha *<input formControlName="slug" maxlength="100" spellcheck="false" [attr.aria-invalid]="form.controls.slug.touched && form.controls.slug.invalid"><small>Minúsculas, números y guiones: /addons/{{ form.controls.slug.value }}</small></label>
         <label>Categoría *<select formControlName="category_id">@for (category of data.categories; track category.id) { <option [value]="category.id">{{ category.name }}{{ category.is_visible ? '' : ' (oculta)' }}</option> }</select></label>
-        <label>Autoría *<input formControlName="author_name" maxlength="150" [attr.aria-invalid]="form.controls.author_name.touched && form.controls.author_name.invalid"></label>
+        <label>Autor o equipo (opcional)<input formControlName="author_name" maxlength="150" placeholder="Equipo WoW Forever" [attr.aria-invalid]="form.controls.author_name.touched && form.controls.author_name.invalid"><small>Si lo dejas vacío, se mostrará Equipo WoW Forever.</small></label>
         <label class="wide">Resumen *<textarea formControlName="summary" rows="3" maxlength="300" [attr.aria-invalid]="form.controls.summary.touched && form.controls.summary.invalid"></textarea><small>{{ form.controls.summary.value.length }}/300 caracteres</small></label>
         <label class="wide">Descripción<textarea formControlName="description" rows="8" maxlength="30000"></textarea></label>
         <label class="wide">Instrucciones de instalación<textarea formControlName="installation_instructions" rows="6" maxlength="30000"></textarea></label>

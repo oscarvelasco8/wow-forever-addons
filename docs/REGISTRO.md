@@ -598,3 +598,9 @@ Validación: npm.cmd run check PASS (20 API,25 SQL,106 Angular,1 SSR,2 empaqueta
 Revisión visual en navegador integrado: publicación en escritorio, confirmación y borrador móvil390x844; scrollWidth390. Capturas fase7-acciones-rapidas-preview-{escritorio,movil}.jpg y fase7-eliminar-confirmacion-preview.jpg. Son datos de ejemplo sin Supabase, no prueba administrativa real. Vista previa compilada con Angular CLI y servida en loopback4201; no se confirma borrado real desde UI. Servidores al inicio:4200 activo,3001/4201 sin escucha. Recuperación sigue aplazada.
 
 Cierre20/11: main cdb29e3b5e4a304db4da33859df2ff83c1a81be3 subido sin force, Vercel success. Smoke público18/18 PASS después del despliegue; bundle alojado incluye Eliminar definitivamente y Continuar eliminación. Primera búsqueda del bundle no detectó imports delimitados con backticks; se corrigió la inspección y confirmó presencia en40 módulos, sin cambio de código. No equivale a borrado administrativo real. Auxiliar4201 detenido;4200 conservado. Propietario puede recargar /administracion y revisar botones sobre su contenido; agente no ha eliminado datos reales. Recuperación continúa pendiente.
+
+## 20/11 — Autoría opcional
+
+Autor o equipo deja de ser obligatorio al crear y editar borradores. Si se deja vacío o solo con espacios, se guarda Equipo WoW Forever; nombres ya existentes se conservan. Validación de150 caracteres intacta. No se cambia esquema ni permisos de Supabase. La publicación guiada sigue requiriendo solo confirmación de permiso, sin selector de licencia pública. Aportaciones voluntarias sin ventajas.
+
+npm.cmd run check PASS20 API/25 SQL/106 Angular/1 SSR/2 empaquetado y check:release14/14; prueba existente de creación ahora omite autor y comprueba valor predeterminado. Revisión visual del formulario en navegador, fixture sin Supabase, captura fase7-autor-opcional-preview.jpg; no creación remota por agente. Auxiliar4201 detenido.

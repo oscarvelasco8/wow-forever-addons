@@ -15,7 +15,7 @@ export class NewAddon {
  readonly categories=signal<Category[]>([]);
  readonly loading=signal(true);readonly saving=signal(false);readonly error=signal('');
  readonly uncertain=signal(false);readonly created=signal('');
- readonly form=this.fb.group({name:['',[Validators.required,Validators.maxLength(100)]],slug:['',[Validators.required,Validators.maxLength(100),Validators.pattern(/^[a-z0-9]+(-[a-z0-9]+)*$/)]],category_id:['',Validators.required],summary:['',[Validators.required,Validators.maxLength(300)]],author_name:['',[Validators.required,Validators.maxLength(150)]],license_name:['Pendiente de revisión',[Validators.required,Validators.maxLength(150)]]});
+ readonly form=this.fb.group({name:['',[Validators.required,Validators.maxLength(100)]],slug:['',[Validators.required,Validators.maxLength(100),Validators.pattern(/^[a-z0-9]+(-[a-z0-9]+)*$/)]],category_id:['',Validators.required],summary:['',[Validators.required,Validators.maxLength(300)]],author_name:['',Validators.maxLength(150)],license_name:['Pendiente de revisión',[Validators.required,Validators.maxLength(150)]]});
  constructor(){inject(PageSeo).update({title:'Nuevo addon | WoW Forever Addons',description:'Crear una ficha privada en borrador.',path:'/administracion/addons/nuevo',noindex:true});void this.load();}
  get dirty(){return this.form.dirty&&!this.created();}
  @HostListener('window:beforeunload',['$event']) beforeUnload(event:BeforeUnloadEvent){if(this.dirty||this.saving()){event.preventDefault();event.returnValue='';}}
@@ -26,7 +26,7 @@ export class NewAddon {
   this.form.markAllAsTouched();if(this.form.invalid){this.error.set('Revisa los campos obligatorios y la dirección de la ficha.');return;}
   this.saving.set(true);this.error.set('');
   try{
-   const addon=await this.gateway.createDraft(this.attemptId,{...this.form.getRawValue(),description:'',credits:'',installation_instructions:''});
+   const addon=await this.gateway.createDraft(this.attemptId,{...this.form.getRawValue(),author_name:this.form.controls.author_name.value.trim()||'Equipo WoW Forever',description:'',credits:'',installation_instructions:''});
    this.created.set(addon.id);this.form.markAsPristine();this.saving.set(false);
    await this.router.navigate(['/administracion/addons',addon.id,'preparar']);
   }catch(error){
