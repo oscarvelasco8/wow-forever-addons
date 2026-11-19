@@ -1,0 +1,17 @@
+<app-auth-shell title="Accede al equipo." description="Introduce el correo y la contraseña de tu cuenta administrativa.">
+  @if (!access.configured) {
+    <div class="connection-note" role="status"><strong>Conexión pendiente</strong>Esta es una vista previa. El acceso todavía no está habilitado y no se envían credenciales.</div>
+  }
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate [attr.aria-busy]="busy()">
+    <div class="field"><label for="admin-email">Correo electrónico</label><input id="admin-email" type="email" autocomplete="username" formControlName="email" maxlength="254" placeholder="tu@correo.com" [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid" aria-describedby="email-error">
+      @if (form.controls.email.touched && form.controls.email.invalid) { <p id="email-error" class="field-error">Introduce un correo electrónico válido.</p> }
+    </div>
+    <div class="field"><label for="admin-password">Contraseña</label><div class="password-input"><input id="admin-password" [type]="showPassword() ? 'text' : 'password'" autocomplete="current-password" formControlName="password" maxlength="1024" placeholder="Tu contraseña" [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid" aria-describedby="password-error"><button class="visibility-toggle" type="button" [disabled]="!access.configured || busy()" [attr.aria-pressed]="showPassword()" (click)="showPassword.set(!showPassword())">{{ showPassword() ? 'Ocultar' : 'Mostrar' }}</button></div>
+      @if (form.controls.password.touched && form.controls.password.invalid) { <p id="password-error" class="field-error">Introduce tu contraseña.</p> }
+    </div>
+    @if (error()) { <p class="form-error" role="alert">{{ error() }}</p> }
+    <button type="submit" class="button form-button" [disabled]="!access.configured || busy()">{{ busy() ? 'Comprobando acceso…' : 'Acceder' }} <span aria-hidden="true">↗</span></button>
+  </form>
+  <p class="form-links"><a routerLink="/administracion/recuperar">He olvidado mi contraseña</a></p>
+  <p class="form-footnote">Solo cuentas autorizadas. Se requiere verificación en dos pasos.</p>
+</app-auth-shell>

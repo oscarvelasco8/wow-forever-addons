@@ -1,0 +1,18 @@
+:host { display: block; min-width: 0; }
+.map-art { position: relative; overflow: hidden; background: radial-gradient(ellipse at 40% 60%, #26362b 0, #15231f 48%, #101d1c 100%); }
+.map-art::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 42px, #bdc5a008 43px 44px), repeating-linear-gradient(90deg, transparent 0 42px, #bdc5a008 43px 44px); box-shadow: inset 0 0 100px #090e0d80; }
+svg { display: block; width: 100%; }
+.land { fill: #29342a; stroke: #778269; stroke-width: 1; }
+.contours { stroke: #798869; stroke-width: .8; opacity: .25; }
+.mountains { stroke: #a2a58b; stroke-width: 1.3; opacity: .4; }
+.travel-shadow { stroke: #111c17; stroke-width: 9; }
+.travel { stroke: #e2be77; stroke-width: 2; stroke-dasharray: 5 6; }
+.waypoints circle { fill: #17251e; stroke: #d5b477; stroke-width: 1.5; }
+.waypoint-text { fill: #efd8a8; font: 14px Georgia, serif; text-anchor: middle; }
+.labels { fill: #adb49a; font: 9px 'Segoe UI', sans-serif; letter-spacing: 2px; }
+.destination-halo { fill: #d8b56c10; stroke: #d8b56c40; }
+.destination { fill: #f1d6a1; }
+.compass { stroke: #c3b080; stroke-width: .8; opacity: .7; }
+.compass path { fill: #c3b08025; }
+.compass text { fill: #d0b77c; stroke: none; text-anchor: middle; font: 12px Georgia, serif; }
+.map-caption { position: absolute; z-index: 1; bottom: 18px; left: 22px; font-size: .62rem; color: #b9bfaa; letter-spacing: .08em; }

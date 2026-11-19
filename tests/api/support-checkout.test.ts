@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
+import { once } from 'node:events';
+import { test } from 'node:test';
+import { createSupportCheckoutHandler } from '../../api/support-checkout.ts';
+import { stripeSupportSession, validTestCheckout } from '../../server/support-checkout.ts';
+
+test('test Checkout URLs bind both hosted styles to the authenticated returned session',()=>{
+  for(const style of ['c','g'])assert.equal(validTestCheckout({id:'cs_test_fixture',livemode:false,url:`https://checkout.stripe.com/${style}/pay/cs_test_fixture`}),`https://checkout.stripe.com/${style}/pay/cs_test_fixture`);
+  for(const url of ['https://checkout.stripe.com/g/pay/cs_test_other','https://checkout.stripe.com/g/pay/cs_test_fixture/extra','https://evil.example/g/pay/cs_test_fixture'])assert.equal(validTestCheckout({id:'cs_test_fixture',livemode:false,url}),null);
+});
+
+test('support checkout only permits bounded test sessions, fixed origins and idempotent retries', async context => {
+  const keys = ['STRIPE_TEST_CHECKOUT_ENABLED','STRIPE_TEST_SECRET_KEY','STRIPE_TEST_SITE_URL','SUPABASE_URL','SUPABASE_WEBHOOK_SECRET_KEY','STRIPE_TEST_WEBHOOK_ENABLED','STRIPE_TEST_WEBHOOK_SECRET','SUPPORT_RECEIPT_SECRET'];
+  const previous = keys.map(key => process.env[key]);
+  process.env[keys[0]!] = 'true'; process.env[keys[1]!] = 'sk_test_' + 'SyntheticIntegrationKey12345'; process.env[keys[2]!] = 'http://localhost:4200';
+  process.env[keys[3]!] = 'https://example.supabase.co'; process.env[keys[4]!] = 'sb_secret_SyntheticProtectionKey12345';
+  process.env[keys[5]!] = 'true'; process.env[keys[6]!] = 'whsec_SyntheticProtectionSecret12345';
+  process.env['SUPPORT_RECEIPT_SECRET']='a'.repeat(64);
+  let calls = 0, unsafe = false; let style='c'; const idem: string[] = [];
+  const transport: typeof fetch = async (input, init) => {
+    calls++; assert.equal(String(input), 'https://api.stripe.com/v1/checkout/sessions');
+    const headers = new Headers(init?.headers); idem.push(headers.get('Idempotency-Key')!);
+    assert.equal(headers.get('Stripe-Version'),'2026-11-18.endive');
+    const body = new URLSearchParams(String(init?.body));
+    assert.equal(body.get('mode'),'payment'); assert.equal(body.get('allowed_payment_method_types[0]'),'card');
+    assert.equal(body.get('line_items[0][price_data][unit_amount]'),'500');
+    assert.equal(body.get('line_items[0][price_data][currency]'),'eur');
+    assert.equal(body.get('success_url'),'http://localhost:4200/apoyar?checkout=return&session_id={CHECKOUT_SESSION_ID}');
+    assert.equal(body.get('customer_email'),null); assert.equal(body.get('subscription_data'),null);
+    return Response.json({ id:'cs_test_fixture',livemode:unsafe,url:unsafe?'https://evil.example/pay':`https://checkout.stripe.com/${style}/pay/cs_test_fixture` });
+  };
+  let admissions=0,limited=false,broken=false;
+  const handler = createSupportCheckoutHandler(stripeSupportSession(transport),async()=>{admissions++;if(broken)throw new Error('private protection detail');return {allowed:!limited,retryAfter:limited?42:0};});
+  const server = createServer((req,res) => { void handler(req,res); }); server.listen(0,'127.0.0.1'); await once(server,'listening');
+  const address = server.address(); assert.ok(address && typeof address !== 'string'); const base = `http://127.0.0.1:${address.port}`;
+  context.after(async () => { keys.forEach((key,i)=>{ if(previous[i]===undefined) delete process.env[key]; else process.env[key]=previous[i]; }); server.closeAllConnections(); await new Promise<void>(resolve=>server.close(()=>resolve())); });
+  const payload = {amount:500,attemptId:'11111111-1111-4111-8111-111111111111'};
+  const post = (body: unknown = payload, origin = 'http://localhost:4200') => fetch(base,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  assert.equal(((await (await fetch(base)).json()) as {enabled:boolean}).enabled,true);
+  assert.equal((await post()).status,200);style='g'; assert.equal((await post()).status,200); assert.equal(idem[0],idem[1]);
+  assert.equal((await post({...payload,amount:1})).status,400);
+  assert.equal((await post({...payload,amount:500.1})).status,400);
+  assert.equal((await post({...payload,returnUrl:'https://evil.example'})).status,400);
+  assert.equal((await post({...payload,attemptId:'invalid'})).status,400);
+  assert.equal((await post(payload,'https://evil.example')).status,403);
+  assert.equal((await post(payload,'null')).status,403);
+  assert.equal((await post('x'.repeat(1100))).status,413);
+  assert.equal((await fetch(base,{method:'POST',headers:{Origin:'http://localhost:4200','Content-Type':'text/plain'},body:'{}'})).status,415);
+  assert.equal(calls,2);
+  assert.equal(admissions,2);
+  limited=true; const denied=await post(); assert.equal(denied.status,429); assert.equal(denied.headers.get('Retry-After'),'42');assert.equal(calls,2);
+  limited=false;broken=true;const unavailable=await post();assert.equal(unavailable.status,503);assert.equal((await unavailable.text()).includes('private protection'),false);assert.equal(calls,2);broken=false;
+  unsafe=true; assert.equal((await post()).status,503);
+  delete process.env[keys[6]!];assert.equal(((await(await fetch(base)).json()) as {enabled:boolean}).enabled,false);
+  assert.equal((await post()).status,503);process.env[keys[6]!] = 'whsec_SyntheticProtectionSecret12345';
+  process.env[keys[1]!] = 'sk_live_' + 'SyntheticRejectedKey12345';
+  assert.equal(((await (await fetch(base)).json()) as {enabled:boolean}).enabled,false); assert.equal((await post()).status,503); assert.equal(calls,3);
+  assert.equal((await fetch(base,{method:'PUT'})).status,405);
+});

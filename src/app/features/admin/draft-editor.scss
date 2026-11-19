@@ -1,0 +1,21 @@
+.editor { max-width: 1100px; }
+.asset-body { border:0; padding:0; min-width:0; }
+.asset-review input[type='checkbox'] { width:auto; display:inline-block; margin-right:12px; }
+header { margin-block: 32px; } h1 { font-size: clamp(2.5rem, 7vw, 4rem); }
+.panel, .preview { padding: clamp(20px, 4vw, 36px); margin-block: 24px; border: 1px solid var(--border); background: var(--surface); }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-block: 24px; }
+.wide { grid-column: 1/-1; } label { display: block; font-size: .8rem; color: var(--muted); }
+input, textarea, select { display: block; width: 100%; min-width: 0; margin-top: 9px; background: #11160f; color: var(--text); border: 1px solid #59614e; padding: 12px; border-radius: 0; font: inherit; }
+textarea { resize: vertical; line-height: 1.6; } small { display: block; margin-top: 8px; font-size: .65rem; overflow-wrap: anywhere; }
+[aria-invalid="true"] { border-color: #e6a59a; } .message { padding: 18px; border: 1px solid var(--border); overflow-wrap: anywhere; }
+.error { color: #f1b4a8; } .success { color: #c9dda9; }
+.draft-note { display: grid; gap: 8px; padding: 20px; border-left: 2px solid var(--gold); background: var(--surface); }
+.draft-note span, .editor-actions > span { color: var(--muted); font-size: .75rem; }
+.editor-actions { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: center; margin-block: 24px; }
+.plain { white-space: pre-wrap; overflow-wrap: anywhere; } .preview h3 { margin-top: 28px; }
+.checksum { font-family: monospace; font-size: .7rem; overflow-wrap: anywhere; }
+.asset-grid { display: grid; gap: 24px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+.asset-grid article { padding: 20px; border: 1px solid var(--border); overflow-wrap: anywhere; }
+.asset-grid img { display: block; width: 100%; max-height: 360px; object-fit: contain; margin-block: 15px; }
+.panel h2 { font-size: 1.8rem; } input:disabled,textarea:disabled,select:disabled { opacity: .65; }
+@media(max-width: 650px) { .fields,.asset-grid { grid-template-columns: 1fr; } .editor .button { width: 100%; white-space: normal; text-align: center; } }

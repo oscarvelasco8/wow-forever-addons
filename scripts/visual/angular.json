@@ -1,0 +1,31 @@
+{
+  "$schema": "../../node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "editorial-preview": {
+      "projectType": "application",
+      "root": ".",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "configurations": {
+            "assets": {"browser":"assets-preview.ts","tsConfig":"tsconfig.assets.json","outputPath":"../../dist/assets-preview"},
+            "support": { "browser": "support-preview.ts", "tsConfig": "tsconfig.support.json", "outputPath": "../../dist/support-preview" },
+            "pagination": { "browser": "pagination-preview.ts", "tsConfig": "tsconfig.pagination.json", "outputPath": "../../dist/pagination-preview" },
+            "categories": { "browser": "categories-preview.ts", "tsConfig": "tsconfig.categories.json", "outputPath": "../../dist/categories-preview" },
+            "gallery": { "browser": "public-gallery-preview.ts", "tsConfig": "tsconfig.gallery.json", "outputPath": "../../dist/gallery-preview" }
+          },
+          "options": {
+            "browser": "editorial-preview.ts",
+            "tsConfig": "tsconfig.json",
+            "index": "index.html",
+            "styles": ["../../src/styles.scss"],
+            "outputPath": "../../dist/editorial-preview",
+            "optimization": { "scripts": true, "styles": { "minify": true, "inlineCritical": false }, "fonts": false },
+            "sourceMap": false
+          }
+        }
+      }
+    }
+  }
+}

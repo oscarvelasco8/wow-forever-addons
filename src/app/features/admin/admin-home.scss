@@ -1,0 +1,9 @@
+.management header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 24px; margin-bottom: 55px; }
+h1 { font-size: clamp(2.5rem, 7vw, 4rem); } .management header p { color: var(--muted); }
+.draft-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 45px; }
+.draft-grid article { padding: 28px; border: 1px solid var(--border); background: var(--surface); overflow-wrap: anywhere; }
+.draft-grid h3 { font-size: 2rem; margin-block: 20px 15px; } .draft-grid p { color: var(--muted); font-size: .85rem; }
+.diagnostics { border-top: 1px solid var(--border); padding-block: 24px; margin-bottom: 30px; }
+summary { cursor: pointer; color: var(--gold); } .diagnostics h2 { font-size: 1.5rem; margin-top: 30px; }
+.diagnostics p { font-size: .8rem; overflow-wrap: anywhere; } .error { color: #f1b4a8; }
+@media(max-width: 650px) { .draft-grid { grid-template-columns: 1fr; } .section-heading { flex-wrap: wrap; } .button { white-space: normal; } }

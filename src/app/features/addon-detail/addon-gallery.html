@@ -1,0 +1,69 @@
+@if (current(); as image) {
+  <section class="gallery" aria-label="Imágenes del addon">
+    <figure>
+      <div class="stage" [attr.aria-busy]="phase() === 'loading'">
+        @for (requestKey of [key()]; track requestKey) {
+          <img
+            #mainImage
+            class="main-image"
+            fetchpriority="high"
+            [src]="currentUrl()"
+            [attr.srcset]="currentSrcset()"
+            sizes="(max-width: 850px) calc(100vw - 40px), 700px"
+            [alt]="image.altText"
+            decoding="async"
+            referrerpolicy="no-referrer"
+            [hidden]="phase() === 'error'"
+            (load)="mark(requestKey, 'ready')"
+            (error)="mark(requestKey, 'error')"
+          />
+        }
+        @if (phase() === 'loading') {
+          <p class="state" role="status">Cargando imagen…</p>
+        }
+        @if (phase() === 'error') {
+          <div class="state error">
+            <p role="status">Esta imagen no está disponible.</p>
+            <button class="button secondary" (click)="retry()">Reintentar imagen</button>
+          </div>
+        }
+      </div>
+      <figcaption aria-live="polite">
+        <span>{{ image.altText }}</span
+        ><span class="counter">{{ position() + 1 }} / {{ images().length }}</span>
+      </figcaption>
+    </figure>
+    @if (images().length > 1) {
+      <div class="navigation">
+        <button class="button secondary" (click)="step(-1)" aria-label="Imagen anterior">
+          ← Anterior</button
+        ><button class="button secondary" (click)="step(1)" aria-label="Imagen siguiente">
+          Siguiente →
+        </button>
+      </div>
+      <div class="thumbnails" role="group" aria-label="Elegir imagen">
+        @for (thumb of images(); track thumb.id; let index = $index) {
+          <button
+            class="thumbnail"
+            [attr.aria-label]="'Ver imagen ' + (index + 1) + ': ' + thumb.altText"
+            [attr.aria-pressed]="thumb.id === image.id"
+            (click)="select(thumb.id)"
+          >
+            @if (!thumbnailErrors().has(thumb.id)) {
+              <img
+                [src]="url(thumb.id)"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer"
+                (error)="thumbnailFailed(thumb.id)"
+              />
+            } @else {
+              <span>Vista {{ index + 1 }}</span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </section>
+}

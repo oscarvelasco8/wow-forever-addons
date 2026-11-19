@@ -1,0 +1,15 @@
+:host { display: block; min-width: 0; }
+.collection-preview { border: 1px solid var(--border); background: radial-gradient(ellipse at top right, #56613b26, transparent 70%), var(--surface); padding: 28px; }
+.collection-top, .collection-bottom { display: flex; justify-content: space-between; align-items: center; gap: 16px; color: var(--muted); font-size: .6rem; }
+.collection-top { letter-spacing: .16em; color: var(--gold); }
+.collection-intro { padding-block: 26px; }
+.collection-symbol { color: var(--gold); font-size: 2.5rem; }
+.collection-intro h2 { margin: 10px 0 20px; font-size: clamp(2rem, 3.4vw, 3rem); }
+.collection-intro p { color: var(--muted); font-size: .8rem; }
+.collection-item { display: flex; gap: 18px; align-items: center; padding: 20px 0; border-block: 1px solid var(--border); text-decoration: none; }
+.collection-item > span:last-child { margin-left: auto; }
+.collection-icon { padding: 5px 16px; border: 1px solid var(--gold); font: 1.8rem var(--font-display); }
+.collection-item strong { color: var(--text); font: 1.3rem var(--font-display); }
+.collection-item small { display: block; color: var(--muted); font-size: .65rem; }
+.collection-bottom { padding-top: 22px; flex-wrap: wrap; }
+@media (max-width: 700px) { .collection-preview { padding: 24px; } }

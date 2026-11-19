@@ -1,0 +1,23 @@
+.auth-layout { display: grid; grid-template-columns: 1.1fr 1fr; align-items: start; gap: 90px; padding-block: 48px 85px; }
+.back-link { display: inline-block; font-size: .72rem; margin-bottom: 48px; }
+.auth-intro h1 { font-size: clamp(2.5rem, 4vw, 3.7rem); }
+.auth-intro h1 em { color: var(--gold); }
+.intro-copy { color: var(--muted); max-width: 440px; font-size: .9rem; }
+.access-note { display: flex; gap: 18px; border-top: 1px solid var(--border); padding-top: 28px; margin-top: 38px; max-width: 450px; }
+.access-note > span { color: var(--gold); font-size: 1.5rem; }
+.access-note strong { font-size: .78rem; font-weight: 500; }
+.access-note p { font-size: .75rem; color: var(--muted); margin: 8px 0 0; }
+.auth-panel { padding: 36px; border: 1px solid var(--border); background: radial-gradient(ellipse at 90% 0, #4b583120, transparent 70%), var(--surface); }
+.panel-icon { display: grid; place-items: center; width: 54px; height: 54px; border: 1px solid #cdb17a50; color: var(--gold); margin-bottom: 28px; }
+.panel-icon svg { stroke: currentColor; stroke-width: 1.2; }
+.auth-panel .eyebrow { margin-bottom: 14px; font-size: .58rem; }
+.auth-panel h2 { font-size: 2rem; margin-bottom: 14px; }
+.panel-description { color: var(--muted); font-size: .8rem; margin-bottom: 24px; }
+@media (max-width: 900px) { .auth-layout { gap: 36px; } .auth-panel { padding: 28px; } }
+@media (max-width: 700px) {
+  .auth-layout { grid-template-columns: 1fr; padding-block: 28px 50px; gap: 28px; }
+  .back-link { margin-bottom: 32px; }
+  .auth-intro h1 { font-size: 2.5rem; }
+  .access-note { margin-top: 22px; padding-top: 18px; }
+  .auth-panel { padding: 24px; }
+}

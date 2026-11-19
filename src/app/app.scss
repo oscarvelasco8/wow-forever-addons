@@ -1,0 +1,28 @@
+.topline { border-bottom: 1px solid var(--border); font-size: .6rem; letter-spacing: .1em; color: var(--muted); }
+.topline > div { display: flex; justify-content: space-between; padding-block: 10px; }
+.topline span { color: #858f7d; }
+.site-header { min-height: 105px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--border); }
+.brand { display: flex; align-items: center; gap: 13px; color: var(--text); text-decoration: none; font-family: var(--font-display); font-size: 1.5rem; letter-spacing: .03em; }
+.brand svg { stroke: var(--gold); fill: none; stroke-width: .7; }
+.brand svg path { fill: #cdb17a40; }
+.brand small { display: block; color: var(--gold); font: .52rem var(--font-body); letter-spacing: .1em; margin-top: 5px; }
+nav { display: flex; gap: 32px; }
+nav a { min-height: 44px; display: inline-flex; align-items: center; gap: 10px; color: var(--muted); font-size: .76rem; text-decoration: none; border-bottom: 1px solid transparent; }
+nav a:hover, nav a.active { color: var(--gold); border-color: var(--gold); }
+.site-footer { border-top: 1px solid var(--border); }
+.footer-top { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-block: 40px; }
+.footer-brand { color: var(--text); font-family: var(--font-display); text-decoration: none; font-size: 1.25rem; }
+.footer-brand span { display: block; font: .68rem var(--font-body); letter-spacing: normal; color: var(--muted); margin-top: 5px; }
+.footer-top p { margin: 0; color: var(--muted); font-size: .78rem; }
+.footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-block: 22px; border-top: 1px solid var(--border); color: #939c88; font-size: .64rem; }
+.footer-bottom p { margin: 0; }
+.footer-bottom > span { white-space: nowrap; }
+@media (max-width: 700px) {
+  .topline span { display: none; }
+  .site-header { flex-direction: column; align-items: flex-start; gap: 16px; padding-top: 22px; }
+  nav { width: 100%; justify-content: space-between; gap: 12px; }
+  nav a { font-size: .7rem; padding-bottom: 12px; }
+  .footer-top { flex-wrap: wrap; align-items: start; }
+  .footer-top p { text-align: right; }
+  .footer-bottom { flex-direction: column; gap: 14px; }
+}

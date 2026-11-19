@@ -1,0 +1,46 @@
+<section class="container section editor">
+  <a routerLink="/administracion">← Volver a gestión</a>
+  <p><a [routerLink]="['/administracion/addons',id,'publicacion']">Revisión, publicación e historial ↗</a></p>
+  <header><p class="eyebrow">Catálogo · Administración</p><h1>Editar borrador.</h1><p>Prepara la ficha y la compatibilidad de sus versiones. Cada formulario se guarda por separado.</p></header>
+  @if (loading()) { <p role="status">Cargando borrador…</p> }
+  @if (error()) { <div class="message error" role="alert">{{ error() }}</div> }
+  @if (success()) { <p class="message success" role="status">{{ success() }}</p> }
+  @if (conflict() || (!loading() && !bundle())) { <button class="button secondary" (click)="load()" [disabled]="saving()">Recargar borrador</button> }
+  @if (bundle(); as data) {
+    <div class="draft-note"><strong>{{ data.addon.name }} · Borrador</strong><span>La aprobación de distribución y la publicación se gestionarán en un paso independiente.</span></div>
+    <p><a class="button secondary" [routerLink]="['/administracion/addons', data.addon.id, 'archivos']">Gestionar imágenes y ZIP ↗</a></p>
+    <div class="editor-actions"><span>{{ dirty ? 'Hay cambios sin guardar' : 'Sin cambios pendientes' }}</span><button class="button secondary" type="button" (click)="preview.set(!preview())" [disabled]="saving()">{{ preview() ? 'Cerrar vista previa' : 'Ver vista previa privada' }}</button></div>
+    @if (preview()) {
+      <article class="preview"><p class="eyebrow">Vista previa privada · Sin publicar</p><h2>{{ form.controls.name.value }}</h2><p>{{ form.controls.summary.value }}</p><div class="plain">{{ form.controls.description.value }}</div><h3>Instalación</h3><div class="plain">{{ form.controls.installation_instructions.value || 'Instrucciones pendientes.' }}</div><h3>Créditos y licencia</h3><p>{{ form.controls.author_name.value }} · {{ form.controls.license_name.value }}</p><div class="plain">{{ form.controls.credits.value }}</div></article>
+    }
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate [attr.aria-busy]="saving()" class="panel">
+      <h2>Ficha del addon</h2><p class="muted">Los campos con * son obligatorios. Los textos se guardan sin formato HTML.</p>
+      <div class="fields">
+        <label>Nombre *<input formControlName="name" maxlength="100" [attr.aria-invalid]="form.controls.name.touched && form.controls.name.invalid"></label>
+        <label>Dirección de la ficha *<input formControlName="slug" maxlength="100" spellcheck="false" [attr.aria-invalid]="form.controls.slug.touched && form.controls.slug.invalid"><small>Minúsculas, números y guiones: /addons/{{ form.controls.slug.value }}</small></label>
+        <label>Categoría *<select formControlName="category_id">@for (category of data.categories; track category.id) { <option [value]="category.id">{{ category.name }}{{ category.is_visible ? '' : ' (oculta)' }}</option> }</select></label>
+        <label>Autoría *<input formControlName="author_name" maxlength="150" [attr.aria-invalid]="form.controls.author_name.touched && form.controls.author_name.invalid"></label>
+        <label class="wide">Resumen *<textarea formControlName="summary" rows="3" maxlength="300" [attr.aria-invalid]="form.controls.summary.touched && form.controls.summary.invalid"></textarea><small>{{ form.controls.summary.value.length }}/300 caracteres</small></label>
+        <label class="wide">Descripción<textarea formControlName="description" rows="8" maxlength="30000"></textarea></label>
+        <label class="wide">Instrucciones de instalación<textarea formControlName="installation_instructions" rows="6" maxlength="30000"></textarea></label>
+        <label>Licencia o estado de revisión *<input formControlName="license_name" maxlength="150" [attr.aria-invalid]="form.controls.license_name.touched && form.controls.license_name.invalid"><small>Indicar una licencia no aprueba la distribución.</small></label>
+        <label class="wide">Créditos y procedencia<textarea formControlName="credits" rows="5" maxlength="30000"></textarea></label>
+      </div>
+      <button class="button" type="submit" [disabled]="saving() || loading() || conflict() || !form.dirty">{{ saving() ? 'Guardando…' : 'Guardar ficha en borrador' }}</button>
+    </form>
+    <section class="panel"><h2>Versiones en borrador</h2>
+      @if (data.releases.length) {
+        <label>Versión que quieres editar<select [value]="selectedRelease()?.id" (change)="chooseRelease($any($event.target).value)" [disabled]="saving()">@for (release of data.releases; track release.id) { <option [value]="release.id">{{ release.version }}</option> }</select></label>
+        <form [formGroup]="releaseForm" (ngSubmit)="saveRelease()" novalidate [attr.aria-busy]="saving()">
+          <div class="fields">
+            <label>Número de versión *<input formControlName="version" maxlength="64" [attr.aria-invalid]="releaseForm.controls.version.touched && releaseForm.controls.version.invalid"></label>
+            <label>Cliente compatible declarado *<input formControlName="game_version" maxlength="40" [attr.aria-invalid]="releaseForm.controls.game_version.touched && releaseForm.controls.game_version.invalid"></label>
+            <label>Interfaz *<input type="number" formControlName="interface_version" min="1" max="2147483647" step="1" [attr.aria-invalid]="releaseForm.controls.interface_version.touched && releaseForm.controls.interface_version.invalid"><small>Valor entero. La declaración no sustituye las pruebas dentro del juego.</small></label>
+            <label class="wide">Novedades de la versión<textarea formControlName="changelog" rows="6" maxlength="30000"></textarea></label>
+          </div>
+          <button class="button" type="submit" [disabled]="saving() || conflict() || !releaseForm.dirty">{{ saving() ? 'Guardando…' : 'Guardar versión en borrador' }}</button>
+        </form>
+      } @else { <p>No hay versiones en borrador. La creación y subida de versiones se incorporará en el siguiente paso.</p> }
+    </section>
+  }
+</section>

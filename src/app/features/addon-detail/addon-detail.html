@@ -1,0 +1,29 @@
+<div class="container">
+  <a class="breadcrumb" routerLink="/catalogo">← Volver a los addons</a>
+  @if (catalog.state() === 'loading') { <section class="detail-section"><h1>Cargando ficha…</h1><p role="status">Consultando la colección.</p></section> }
+  @if (catalog.state() === 'error') { <section class="detail-section"><h1>No podemos cargar la ficha.</h1><p role="alert">Inténtalo de nuevo en unos momentos.</p><button class="button" (click)="catalog.load()">Reintentar</button></section> }
+  @if (catalog.state() === 'ready') {
+    @if (addon(); as item) {
+      <header class="detail-heading"><div><p class="eyebrow">{{ item.category }} / WoW Forever</p><h1>{{ item.name }}<span>{{ item.summary }}</span></h1></div><app-status-badge>Gratuito, con todas sus funciones</app-status-badge></header>
+      <div class="detail-grid">
+        @if(item.images.length){<app-addon-gallery [images]="item.images"/>}
+        @else{<figure>@if (item.slug === 'rumbo') { <app-route-map /><figcaption>Ilustración conceptual de navegación. No es una captura del addon.</figcaption> } @else { <div class="generic-illustration" aria-hidden="true">◇</div><figcaption>{{ item.name }} · {{ item.category }}</figcaption> }</figure>}
+        <aside class="release-panel"><p class="eyebrow">Versión publicada</p>
+          @if (item.releases[0]; as release) {
+            <h2>{{ item.name }} {{ release.version }}</h2><dl><div><dt>Cliente</dt><dd>{{ release.gameVersion }}</dd></div><div><dt>Interfaz</dt><dd>{{ release.interfaceVersion }}</dd></div></dl>
+            <a class="button" [href]="'/api/download?release=' + release.id">Descargar gratis ↗</a><p>Sin cuenta ni pago. Las aportaciones son voluntarias.</p>
+          } @else { <h2>Aún no hay versiones publicadas.</h2><p>Vuelve más adelante para consultar las descargas.</p> }
+        </aside>
+      </div>
+      <section class="detail-section"><p class="eyebrow">Sobre el addon</p><h2>Conoce {{ item.name }}.</h2><p class="plain-content">{{ item.description }}</p></section>
+      @if (item.installationInstructions) { <section class="detail-section"><h2>Instalación</h2><p class="plain-content">{{ item.installationInstructions }}</p></section> }
+      @if (item.releases.length) {
+        <section class="detail-section"><h2>Versiones y novedades</h2>@for (release of item.releases; track release.id) { <article><h3>Versión {{ release.version }}</h3><p class="muted">{{ release.gameVersion }} · Interfaz {{ release.interfaceVersion }}</p><p class="plain-content">{{ release.changelog }}</p><a [href]="'/api/download?release=' + release.id">Descargar {{ release.version }}</a></article> }</section>
+      }
+      <section class="credits notice"><strong>Créditos y licencia</strong><span class="plain-content">{{ item.author }} · {{ item.license }}
+{{ item.credits }}</span></section>
+    } @else {
+      <section class="detail-section"><h1>Este addon no está disponible.</h1><p>Consulta el catálogo para conocer las herramientas publicadas.</p><a routerLink="/catalogo" class="button secondary">Ver catálogo</a></section>
+    }
+  }
+</div>

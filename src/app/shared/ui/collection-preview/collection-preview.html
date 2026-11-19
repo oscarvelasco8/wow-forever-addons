@@ -1,0 +1,8 @@
+<aside class="collection-preview" aria-labelledby="collection-title">
+  <div class="collection-top"><span>EL ARCHIVO</span><span>LA COLECCIÓN</span></div>
+  <div class="collection-intro"><span class="collection-symbol" aria-hidden="true">◇</span><h2 id="collection-title">Un lugar para<br>cada herramienta.</h2><p>Un catálogo abierto a nuevas ideas.<br>Cada addon, con su propio espacio.</p></div>
+  @for (addon of addons().slice(0, 3); track addon.slug) {
+    <a class="collection-item" [routerLink]="['/addons', addon.slug]"><span class="collection-icon" aria-hidden="true">{{ addon.name.charAt(0) }}</span><span><strong>{{ addon.name }}</strong><small>{{ addon.category }}</small></span><span aria-hidden="true">↗</span></a>
+  }
+  <div class="collection-bottom"><app-status-badge>@if (catalog.state() === 'loading') { Cargando colección… } @else if (catalog.state() === 'error') { Colección no disponible } @else { {{ addons().length }}{{ catalog.nextCursor() ? '+' : '' }} {{ addons().length === 1 ? 'addon' : 'addons' }} publicados }</app-status-badge><a routerLink="/catalogo">Ver todos ↗</a></div>
+</aside>

@@ -1,0 +1,54 @@
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.entry {
+  padding-block: 20px;
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+dl {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  font-size: 0.85rem;
+}
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+dt {
+  color: var(--muted);
+}
+.review {
+  border: 2px solid var(--gold);
+  scroll-margin-top: 100px;
+}
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.check input {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+summary {
+  cursor: pointer;
+  line-height: 1.7;
+}
+@media (max-width: 500px) {
+  dl {
+    grid-template-columns: 1fr;
+  }
+  dd {
+    margin-bottom: 8px;
+  }
+}

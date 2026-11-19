@@ -1,0 +1,31 @@
+<div class="container">
+  <section class="hero" aria-labelledby="home-title">
+    <div class="hero-copy">
+      <p class="eyebrow">WoW Forever Addons</p>
+      <h1 id="home-title">Tu aventura.<br>Tus herramientas.<br><em>Un solo lugar.</em></h1>
+      <p class="hero-description">Un catálogo para descubrir los addons<br>que acompañarán tus próximas aventuras.</p>
+      <p class="muted hero-detail">Aquí reuniremos todos los addons que creemos para WoW Forever. Cada uno con su ficha, sus versiones y sus próximas mejoras.</p>
+      <a class="button" routerLink="/catalogo">Explorar addons <span aria-hidden="true">↗</span></a>
+      <span class="hero-footnote">Sin registro · Sin funciones de pago</span>
+    </div>
+    <app-collection-preview />
+  </section>
+  <div class="principles"><span>01 <strong>Descarga libre</strong></span><span>02 <strong>Para WoW Forever</strong></span><span>03 <strong>Apoyo voluntario</strong></span></div>
+
+  @if (catalog.addons()[0]; as addon) {
+    <section class="section featured" aria-labelledby="featured-title">
+      <div class="section-heading"><div><p class="eyebrow">Del catálogo</p><h2 id="featured-title">Herramientas para<br>tu próxima aventura.</h2></div><a routerLink="/catalogo" class="text-link">Ver catálogo ↗</a></div>
+      <article class="featured-addon">
+        <div class="addon-identity"><span class="addon-number">{{ addon.category }}</span><span class="addon-seal" aria-hidden="true">{{ addon.name.charAt(0) }}</span><span class="addon-version">{{ addon.name }}</span></div>
+        <div class="addon-copy"><app-status-badge>Gratuito</app-status-badge><h3>{{ addon.name }}</h3><p>{{ addon.summary }}</p></div>
+        <div class="addon-action"><span>WoW Forever<br>@if (addon.releases[0]; as release) { <strong>Interfaz {{ release.interfaceVersion }}</strong> }</span><a [routerLink]="['/addons', addon.slug]" class="button secondary">Ver ficha ↗</a></div>
+      </article>
+    </section>
+  } @else if (catalog.state() === 'ready') {
+    <section class="section"><p class="eyebrow">Una colección que empieza</p><h2>Estamos preparando<br>las primeras publicaciones.</h2><p class="muted">Las descargas todavía no están disponibles. Cuando publiquemos un addon, aparecerá aquí y en el catálogo.</p></section>
+  }
+  <section id="proyecto" class="project section" aria-labelledby="project-title">
+    <div><p class="eyebrow">Nuestra forma de hacer las cosas</p><h2 id="project-title">La aventura es tuya.<br>Las herramientas, de todos.</h2></div>
+    <div class="project-copy"><p>WoW Forever Addons será el punto de encuentro de nuestras herramientas: desde Rumbo hasta los addons que creemos después. Podrás conocerlos y descargarlos sin crear una cuenta.</p><p class="muted">Todos serán gratuitos, con sus funciones y actualizaciones. Las aportaciones voluntarias a la plataforma ayudarán a mantener este espacio abierto para la comunidad.</p><a routerLink="/apoyar" class="text-link">Cómo apoyar la plataforma <span aria-hidden="true">↗</span></a></div>
+  </section>
+</div>

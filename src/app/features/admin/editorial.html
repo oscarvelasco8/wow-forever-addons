@@ -1,0 +1,310 @@
+<section class="container section editor">
+  <a routerLink="/administracion">← Volver a gestión</a>
+  <header>
+    <p class="eyebrow">Catálogo · Control editorial</p>
+    <h1>Revisar y publicar.</h1>
+    <p>La revisión de distribución, las versiones y la ficha se aprueban por separado.</p>
+  </header>
+  @if (loading()) {
+    <p role="status">Cargando revisión…</p>
+  }
+  @if (error()) {
+    <p class="message error" role="alert">{{ error() }}</p>
+  }
+  @if (success()) {
+    <p class="message success" role="status">{{ success() }}</p>
+  }
+  <button class="button secondary" (click)="reload()" [disabled]="busy() || loading()">
+    Recargar estado e historial
+  </button>
+  @if (bundle(); as data) {
+    <section class="panel">
+      <p class="eyebrow">{{ status(data.addon.status) }}</p>
+      <h2>{{ data.addon.name }}</h2>
+      <p>{{ data.addon.summary }}</p>
+      <dl>
+        <dt>Distribución</dt>
+        <dd>
+          {{
+            data.addon.distribution_approved
+              ? 'Revisión registrada'
+              : 'Pendiente de revisión de derechos y licencia'
+          }}
+        </dd>
+        <dt>Licencia</dt>
+        <dd>{{ data.addon.license_name }}</dd>
+        <dt>Categoría</dt>
+        <dd>{{ data.category.name }} · {{ data.category.is_visible ? 'Visible' : 'Oculta' }}</dd>
+      </dl>
+      <p class="draft-note">
+        Antes de aprobar, revisa autoría, licencia, créditos y permiso de redistribución. Aprobar no
+        publica la ficha. Las descargas son gratuitas, sin cuenta ni pago.
+      </p>
+      <fieldset [disabled]="busy() || conflict() || !!pending()">
+        <div class="editor-actions">
+          @if (data.addon.status === 'draft') {
+            <a class="button secondary" [routerLink]="['/administracion/addons', id]"
+              >Editar ficha y subidas ↗</a
+            >
+            @if (!data.addon.distribution_approved) {
+              <button
+                class="button"
+                (click)="begin('addon', data.addon, 'approve', 'Aprobar la distribución')"
+              >
+                Revisar distribución
+              </button>
+            } @else {
+              <button
+                class="button secondary"
+                (click)="
+                  begin('addon', data.addon, 'revoke', 'Revocar la aprobación de distribución')
+                "
+              >
+                Revocar aprobación</button
+              ><button
+                class="button"
+                [disabled]="!data.category.is_visible"
+                (click)="begin('addon', data.addon, 'publish', 'Publicar la ficha del addon')"
+              >
+                Publicar ficha
+              </button>
+            }
+          }
+          @if (data.addon.status === 'published') {
+            <a [routerLink]="['/addons', data.addon.slug]">Ver ficha pública ↗</a
+            ><button
+              class="button secondary"
+              (click)="
+                begin('addon', data.addon, 'withdraw', 'Retirar el addon, sus versiones e imágenes')
+              "
+            >
+              Retirar addon
+            </button>
+          }
+        </div>
+      </fieldset>
+    </section>
+    <section class="panel">
+      <h2>Versiones</h2>
+      <p>
+        Prepara una versión antes de publicar la ficha. Con la ficha en borrador, sus versiones
+        siguen ocultas al visitante.
+      </p>
+      <p>
+        <a class="button secondary" [routerLink]="['/administracion/addons', id, 'archivos']"
+          >Subir imágenes o una nueva versión ↗</a
+        >
+      </p>
+      @for (release of data.releases; track release.id) {
+        <article class="entry">
+          <h3>{{ release.version }} · {{ status(release.status) }}</h3>
+          <p>Cliente {{ release.game_version }} · Interfaz {{ release.interface_version }}</p>
+          <p>
+            {{ release.file_path ? 'ZIP asociado' : 'Sin ZIP' }}
+            @if (release.file_size_bytes) {
+              · {{ release.file_size_bytes }} bytes
+            }
+          </p>
+          @if (release.sha256) {
+            <p class="checksum">SHA256: {{ release.sha256 }}</p>
+          }
+          <fieldset [disabled]="busy() || conflict() || !!pending()">
+            <div class="editor-actions">
+              @if (release.status === 'draft') {
+                <button
+                  class="button secondary"
+                  [disabled]="!data.addon.distribution_approved || !release.file_path"
+                  (click)="
+                    begin('release', release, 'publish', 'Publicar la versión ' + release.version)
+                  "
+                >
+                  Publicar versión
+                </button>
+              }
+              @if (release.status === 'published') {
+                <button
+                  class="button secondary"
+                  (click)="
+                    begin('release', release, 'withdraw', 'Retirar la versión ' + release.version)
+                  "
+                >
+                  Retirar versión
+                </button>
+              }
+              @if (release.status === 'archived') {
+                <button
+                  class="button secondary"
+                  (click)="
+                    begin(
+                      'release',
+                      release,
+                      'draft',
+                      'Devolver la versión ' + release.version + ' a borrador'
+                    )
+                  "
+                >
+                  Devolver a borrador
+                </button>
+              }
+            </div>
+          </fieldset>
+        </article>
+      } @empty {
+        <p>No hay versiones. Créala desde las subidas del borrador.</p>
+      }
+      <p class="muted">
+        Al retirar, se deniegan nuevas descargas. Los enlaces ya emitidos pueden seguir funcionando
+        hasta 60 segundos. El ZIP se conserva.
+      </p>
+    </section>
+    <section class="panel">
+      <h2>Imágenes</h2>
+      <p>
+        Revisa el texto alternativo y el orden. Una imagen publicada solo es visible si su addon y
+        categoría también lo son.
+      </p>
+      <div class="asset-grid">
+        @for (image of data.images; track image.id) {
+          <article>
+            <h3>{{ image.alt_text }}</h3>
+            <p>Orden {{ image.sort_order }} · {{ image.is_published ? 'Publicada' : 'Oculta' }}</p>
+            @if (previews()[image.id]) {
+              <img [src]="previews()[image.id]" [alt]="image.alt_text" />
+            }
+            <fieldset [disabled]="busy() || conflict() || !!pending()">
+              <div class="editor-actions">
+                <button
+                  class="button secondary"
+                  (click)="showImage(image.id)"
+                  [disabled]="!!previews()[image.id]"
+                >
+                  Vista previa privada</button
+                ><button class="button secondary" (click)="editImage(image)">
+                  Editar texto y orden
+                </button>
+                @if (image.is_published) {
+                  <button
+                    class="button secondary"
+                    (click)="
+                      begin('image', image, 'withdraw', 'Ocultar la imagen: ' + image.alt_text)
+                    "
+                  >
+                    Ocultar imagen
+                  </button>
+                } @else {
+                  <button
+                    class="button secondary"
+                    [disabled]="!data.addon.distribution_approved"
+                    (click)="
+                      begin('image', image, 'publish', 'Publicar la imagen: ' + image.alt_text)
+                    "
+                  >
+                    Publicar imagen
+                  </button>
+                }
+              </div>
+            </fieldset>
+          </article>
+        } @empty {
+          <p>No hay imágenes asociadas.</p>
+        }
+      </div>
+      @if (selectedImage(); as image) {
+        <form
+          [formGroup]="imageForm"
+          (ngSubmit)="begin('image', image, 'edit', 'Guardar el texto alternativo y orden')"
+        >
+          <fieldset [disabled]="busy() || conflict() || !!pending()">
+            <h3>Editar imagen</h3>
+            <div class="fields">
+              <label>Texto alternativo<input formControlName="alt" maxlength="300" /></label
+              ><label>Orden<input type="number" formControlName="order" min="0" step="1" /></label>
+            </div>
+            <div class="editor-actions">
+              <button class="button" type="submit">Revisar cambios de imagen</button
+              ><button class="button secondary" type="button" (click)="cancelImage()">
+                Cancelar edición
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      }
+    </section>
+    @if (pending(); as review) {
+      <section
+        class="panel review"
+        id="editorial-review"
+        tabindex="-1"
+        aria-labelledby="review-title"
+      >
+        <p class="eyebrow">Confirmación del cambio</p>
+        <h2 id="review-title">{{ review.label }}</h2>
+        @if (review.command.action === 'approve') {
+          <p>
+            Confirma que tienes permiso para distribuir este contenido con la licencia indicada.
+            Anota la revisión realizada y la procedencia del permiso.
+          </p>
+        }
+        @if (review.command.action === 'publish') {
+          <p>
+            Este contenido será accesible sin cuenta ni pago cuando la ficha y su categoría estén
+            visibles.
+          </p>
+        }
+        @if (review.command.action === 'withdraw') {
+          <p>
+            Se ocultará el contenido y se conservarán sus archivos. Si retiras el addon, se retiran
+            también sus versiones, se ocultan sus imágenes y se revoca su aprobación.
+          </p>
+        }
+        @if (review.command.action === 'edit') {
+          <p>Texto alternativo: {{ review.command.alt }} · Orden: {{ review.command.order }}</p>
+        }
+        <form [formGroup]="confirmForm" (ngSubmit)="confirm()">
+          <fieldset [disabled]="busy() || conflict()">
+            <label
+              >Motivo o revisión realizada (12–1000 caracteres)<textarea
+                formControlName="note"
+                minlength="12"
+                maxlength="1000"
+                rows="3"
+              ></textarea></label
+            ><label class="check"
+              ><input type="checkbox" formControlName="reviewed" />He revisado el contenido y
+              confirmo esta operación.</label
+            >
+            <div class="editor-actions">
+              <button class="button" type="submit">
+                {{ busy() ? 'Guardando…' : 'Confirmar cambio' }}</button
+              ><button class="button secondary" type="button" (click)="cancel()">Cancelar</button>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    }
+    <section class="panel">
+      <h2>Historial de cambios</h2>
+      <p>
+        Últimos 100 eventos, del más reciente al más antiguo. El equipo puede consultarlos; no puede
+        modificarlos ni borrarlos desde la aplicación.
+      </p>
+      @for (event of data.events; track event.id) {
+        <details class="entry">
+          <summary>
+            {{ event.occurred_at | date: 'dd/MM/yyyy HH:mm:ss' }} · {{ entityName(event.entity) }} ·
+            {{ operationName(event.operation) }}
+          </summary>
+          <p class="plain">{{ event.note || 'Cambio de contenido sin nota editorial.' }}</p>
+          <p class="checksum">Registro {{ event.entity_id }}</p>
+          <p class="checksum">
+            {{ event.actor_id ? 'Usuario: ' + event.actor_id : 'Operación de mantenimiento' }}
+          </p>
+          <p>Antes: {{ eventDetail(event.before_data) }}</p>
+          <p>Después: {{ eventDetail(event.after_data) }}</p>
+        </details>
+      } @empty {
+        <p>No hay cambios registrados desde la activación del historial.</p>
+      }
+    </section>
+  }
+</section>

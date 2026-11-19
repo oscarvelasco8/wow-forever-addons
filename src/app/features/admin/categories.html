@@ -1,0 +1,186 @@
+<section class="container section editor">
+  <a routerLink="/administracion">← Volver a gestión</a>
+  <header>
+    <p class="eyebrow">Catálogo · Organización</p>
+    <h1>Categorías.</h1>
+    <p>Organiza la colección y decide qué categorías pueden ver los visitantes.</p>
+  </header>
+  @if (error()) {
+    <p role="alert" class="message error">{{ error() }}</p>
+  }
+  @if (success()) {
+    <p role="status" class="message success">{{ success() }}</p>
+  }
+  <div class="editor-actions">
+    <button class="button" (click)="edit(null)" [disabled]="loading() || busy() || conflict() || !!pending()">
+      Nueva categoría</button
+    ><button class="button secondary" (click)="reload()" [disabled]="loading() || busy()">
+      Recargar categorías
+    </button>
+  </div>
+  @if (loading()) {
+    <p role="status">Cargando categorías…</p>
+  }
+  @if (bundle(); as data) {
+    <div class="draft-note">
+      <strong>La visibilidad afecta a toda la categoría.</strong
+      ><span
+        >Ocultarla también oculta sus addons, imágenes y descargas. Volver a mostrarla puede hacer
+        visibles los addons que ya estaban publicados. No cambia su aprobación ni su estado
+        individual.</span
+      >
+    </div>
+    <section class="panel">
+      <h2>Orden en el catálogo</h2>
+      <p>
+        Los números menores aparecen primero. En caso de empate se ordenan por nombre e
+        identificador. Las categorías sin addons publicados no aparecen en el filtro público.
+      </p>
+      <div class="asset-grid">
+        @for (category of data.categories; track category.id) {
+          <article>
+            <p class="eyebrow">
+              {{ category.is_visible ? 'Visible' : 'Oculta' }} · Orden {{ category.sort_order }}
+            </p>
+            <h3>{{ category.name }}</h3>
+            <p class="muted">{{ category.slug }}</p>
+            <button
+              class="button secondary"
+              [attr.aria-label]="'Editar categoría ' + category.name"
+              (click)="edit(category)"
+              [disabled]="busy() || conflict() || !!pending()"
+            >
+              Editar categoría
+            </button>
+          </article>
+        } @empty {
+          <p>No hay categorías. Crea la primera para organizar la colección.</p>
+        }
+      </div>
+    </section>
+    @if (editorOpen()) {
+      <section class="panel" id="category-editor" tabindex="-1">
+        <h2>{{ selected() ? 'Editar categoría' : 'Crear categoría oculta' }}</h2>
+        <form [formGroup]="form" (ngSubmit)="prepare()">
+          <fieldset [disabled]="busy() || conflict() || !!pending()">
+            <div class="fields">
+              <label>Nombre<input formControlName="name" maxlength="80" required /></label
+              ><label
+                >Identificador<input formControlName="slug" maxlength="100" required /><small
+                  >Letras minúsculas, números y guiones. Debe ser único.</small
+                ></label
+              >
+              <label
+                >Orden<input
+                  type="number"
+                  formControlName="order"
+                  min="0"
+                  max="2147483647"
+                  step="1"
+                  required
+              /></label>
+              @if (selected()) {
+                <label class="check"
+                  ><input type="checkbox" formControlName="visible" />Visible en el catálogo
+                  público</label
+                >
+              } @else {
+                <p>
+                  La categoría nueva se creará oculta. Podrás hacerla visible después de revisarla.
+                </p>
+              }
+            </div>
+            <div class="editor-actions">
+              <button type="submit" class="button">Revisar cambios</button
+              ><button type="button" class="button secondary" (click)="close()">
+                Cancelar edición
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    }
+    @if (pending(); as change) {
+      <section
+        class="panel review"
+        id="category-review"
+        tabindex="-1"
+        aria-labelledby="category-review-title"
+      >
+        <p class="eyebrow">Confirmación del cambio</p>
+        <h2 id="category-review-title">
+          {{ change.id ? 'Guardar cambios de categoría' : 'Crear categoría oculta' }}
+        </h2>
+        <dl>
+          <dt>Nombre</dt>
+          <dd>{{ change.name }}</dd>
+          <dt>Identificador</dt>
+          <dd>{{ change.slug }}</dd>
+          <dt>Orden</dt>
+          <dd>{{ change.order }}</dd>
+          <dt>Visibilidad</dt>
+          <dd>{{ change.visible ? 'Visible' : 'Oculta' }}</dd>
+        </dl>
+        @if (selected() && change.visible !== selected()?.is_visible) {
+          <p class="draft-note">
+            {{
+              change.visible
+                ? 'Al mostrarla, sus addons ya publicados y aprobados podrán ser accesibles de nuevo.'
+                : 'Al ocultarla, sus addons, imágenes y nuevas descargas dejarán de estar disponibles. Los enlaces emitidos pueden durar hasta 60 segundos.'
+            }}
+          </p>
+        }
+        <form [formGroup]="review" (ngSubmit)="confirm()">
+          <fieldset [disabled]="busy() || conflict()">
+            <label
+              >Motivo del cambio (12–1000 caracteres)<textarea
+                formControlName="note"
+                rows="3"
+                minlength="12"
+                maxlength="1000"
+              ></textarea></label
+            ><label class="check"
+              ><input type="checkbox" formControlName="confirmed" />He revisado los cambios y su
+              efecto sobre el catálogo.</label
+            >
+            <div class="editor-actions">
+              <button type="submit" class="button">
+                {{ busy() ? 'Guardando…' : 'Confirmar cambio' }}</button
+              ><button type="button" class="button secondary" (click)="cancelReview()">
+                Volver a editar
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    }
+    <section class="panel">
+      <h2>Historial de categorías</h2>
+      <p>
+        Últimos 100 cambios desde la activación del historial. Solo el equipo con verificación en
+        dos pasos puede consultarlos.
+      </p>
+      @for (event of data.events; track event.id) {
+        <details class="entry">
+          <summary>
+            {{ event.occurred_at | date: 'dd/MM/yyyy HH:mm:ss' }} ·
+            {{
+              event.operation === 'INSERT'
+                ? 'Creación'
+                : event.operation === 'DELETE'
+                  ? 'Eliminación'
+                  : 'Edición'
+            }}
+          </summary>
+          <p class="plain">{{ event.note || 'Cambio de mantenimiento sin nota editorial.' }}</p>
+          <p class="checksum">Categoría {{ event.entity_id }}</p>
+          <p class="checksum">
+            {{ event.actor_id ? 'Usuario: ' + event.actor_id : 'Operación de mantenimiento' }}
+          </p>
+        </details>
+      } @empty {
+        <p>Todavía no hay cambios registrados de categorías.</p>
+      }
+    </section>
+  }
+</section>

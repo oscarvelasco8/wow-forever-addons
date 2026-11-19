@@ -1,0 +1,18 @@
+<a class="skip-link" [href]="router.url.split('#')[0] + '#contenido'">Saltar al contenido</a>
+<div class="topline"><div class="container">Herramientas de la comunidad <span>Para World of Warcraft: Forever</span></div></div>
+<header class="site-header container">
+  <a class="brand" routerLink="/" aria-label="WoW Forever Addons, inicio">
+    <svg viewBox="0 0 48 48" width="42" height="42" aria-hidden="true"><path d="m24 3 21 12-21 12L3 15Zm-21 21 21 12 21-12M3 33l21 12 21-12"/></svg>
+    <span>WoW Forever<small>ADDONS · HECHOS POR LA COMUNIDAD</small></span>
+  </a>
+  <nav aria-label="Navegación principal">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" ariaCurrentWhenActive="page">Inicio</a>
+    <a routerLink="/catalogo" routerLinkActive="active" ariaCurrentWhenActive="page">Addons</a>
+    <a routerLink="/apoyar" routerLinkActive="active" ariaCurrentWhenActive="page">Apoya el proyecto <span aria-hidden="true">↗</span></a>
+  </nav>
+</header>
+<main id="contenido" tabindex="-1"><router-outlet /></main>
+<footer class="site-footer container">
+  <div class="footer-top"><a routerLink="/" class="footer-brand">WoW Forever Addons<span>Un lugar para cada herramienta.</span></a><p>Creado con paciencia.<br>Compartido con la comunidad.</p><a routerLink="/catalogo" class="text-link">Explorar addons <span aria-hidden="true">↗</span></a></div>
+  <div class="footer-bottom"><p>Proyecto independiente. Sin afiliación ni respaldo de Blizzard Entertainment.<br>World of Warcraft y sus marcas pertenecen a sus respectivos titulares.</p><span>Descarga libre · Apoyo voluntario<br><a routerLink="/administracion/acceso">Acceso del equipo</a></span></div>
+</footer>

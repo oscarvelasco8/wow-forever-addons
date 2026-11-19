@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": { "types": ["node"] },
+  "files": ["public-gallery-preview.ts"],
+  "include": []
+}

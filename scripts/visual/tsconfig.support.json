@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "files": ["support-preview.ts"],
+  "include": ["../../src/**/*.d.ts"]
+}

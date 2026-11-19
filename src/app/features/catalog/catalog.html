@@ -1,0 +1,164 @@
+<div class="container">
+  <header class="page-heading">
+    <p class="eyebrow">El equipo para tu viaje</p>
+    <h1>Pequeñas herramientas.<br /><em>Grandes aventuras.</em></h1>
+    <p>
+      Explora nuestra colección para WoW Forever. Cada addon, con sus funciones completas y sin
+      barreras de pago.
+    </p>
+  </header>
+  <div class="filters" role="search" aria-label="Buscar addons">
+    <div class="search-field">
+      <label for="addon-search">Buscar un addon</label>
+      <div>
+        <span aria-hidden="true">⌕</span
+        ><input
+          id="addon-search"
+          type="search"
+          maxlength="160"
+          placeholder="Nombre, función o categoría…"
+          [value]="query()"
+          (input)="query.set($any($event.target).value)"
+        />
+      </div>
+    </div>
+    <div class="category-field">
+      <label for="addon-category">Categoría</label
+      ><select
+        id="addon-category"
+        [value]="category()"
+        (change)="category.set($any($event.target).value)"
+      >
+        <option value="">Todas las categorías</option>
+        @for (category of categories(); track category.slug) {
+          <option [value]="category.slug">{{ category.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+  <div class="results-heading">
+    <p role="status" aria-live="polite">
+      @if (catalog.state() === 'loading') {
+        Buscando addons…
+      } @else if (catalog.state() === 'ready') {
+        Mostrando {{ filtered().length }} {{ filtered().length === 1 ? 'addon' : 'addons' }}
+      }
+    </p>
+    <span>WOW FOREVER / COLECCIÓN</span>
+  </div>
+  @if (catalog.state() === 'error') {
+    <section class="empty">
+      <h2>No podemos cargar la colección.</h2>
+      <p role="alert">Inténtalo de nuevo en unos momentos.</p>
+      <button class="button secondary" (click)="catalog.load()">Reintentar</button>
+    </section>
+  }
+  @if (catalog.state() === 'ready') {
+    <div class="catalog-grid">
+      @for (addon of filtered(); track addon.slug) {
+        <article class="addon-card">
+          <a
+            class="card-art"
+            [routerLink]="['/addons', addon.slug]"
+            [attr.aria-label]="'Conocer ' + addon.name"
+          >
+            @if (addon.images[0] && !imageErrors().has(addon.slug)) {
+              <img
+                class="card-image"
+                [src]="'/api/image?image=' + addon.images[0].id + '&size=card'"
+                [attr.srcset]="
+                  '/api/image?image=' +
+                  addon.images[0].id +
+                  '&size=thumb 320w, /api/image?image=' +
+                  addon.images[0].id +
+                  '&size=card 640w'
+                "
+                sizes="(max-width:700px) calc(100vw - 40px), 380px"
+                width="640"
+                height="400"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                (error)="imageFailed(addon.slug)"
+              />
+            } @else if (addon.slug === 'rumbo') {
+              <app-route-map />
+            } @else {
+              <span class="generic-art" aria-hidden="true">◇</span>
+            }
+            <span class="art-title"
+              >{{ addon.name }}<small>{{ addon.category }}</small></span
+            ></a
+          >
+          <div class="card-content">
+            <div class="card-meta">
+              <span>{{ addon.category }}</span
+              ><app-status-badge>Gratuito</app-status-badge>
+            </div>
+            <h2>
+              <a [routerLink]="['/addons', addon.slug]">{{ addon.name }}</a>
+            </h2>
+            <p>{{ addon.summary }}</p>
+            <div class="card-bottom">
+              <span>
+                @if (addon.releases[0]; as release) {
+                  v{{ release.version }} · Interfaz {{ release.interfaceVersion }}
+                } @else {
+                  Sin versión publicada
+                }</span
+              ><a
+                [routerLink]="['/addons', addon.slug]"
+                [attr.aria-label]="'Ver ficha de ' + addon.name"
+                >Ver ficha <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <section class="empty" aria-labelledby="empty-title">
+          <span aria-hidden="true">⌕</span>
+          @if (activeFilters()) {
+            <h2 id="empty-title">No encontramos ese camino.</h2>
+            <p>Prueba con otro nombre o elimina los filtros para ver todos los addons.</p>
+            <button type="button" class="button secondary" (click)="reset()">
+              Limpiar filtros
+            </button>
+          } @else if (catalog.nextCursor()) {
+            <h2 id="empty-title">Esta página ya no tiene addons disponibles.</h2>
+            <p>Puedes cargar los siguientes resultados.</p>
+          } @else {
+            <h2 id="empty-title">La colección se está preparando.</h2>
+            <p>
+              Todavía no hay addons publicados. Cuando estén listos, podrás descargarlos gratis y
+              sin crear una cuenta.
+            </p>
+          }
+        </section>
+      }
+    </div>
+  }
+  @if (validation()) {
+    <p class="error" role="alert">{{ validation() }}</p>
+  }
+  @if (catalog.moreError()) {
+    <p role="alert">{{ catalog.moreError() }}</p>
+  }
+  @if (catalog.nextCursor() && catalog.state() === 'ready') {
+    <div class="pagination">
+      <button
+        class="button secondary"
+        (click)="catalog.loadMore()"
+        [disabled]="catalog.moreLoading()"
+      >
+        {{ catalog.moreLoading() ? 'Cargando más addons…' : 'Cargar más addons' }}
+      </button>
+    </div>
+  }
+  <div class="catalog-note notice">
+    <strong>Herramientas para todos.</strong
+    ><span
+      >Todos los addons y sus funciones son gratuitos. Las aportaciones voluntarias no conceden
+      acceso ni ventajas.</span
+    >
+  </div>
+</div>

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "outputDirectory": "dist/wow-forever-addons/browser",
+  "functions": { "api/render.ts": { "includeFiles": "dist/wow-forever-addons/{server,browser}/**", "maxDuration": 30 }, "api/image.ts": { "maxDuration": 20 } },
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/addons/:slug", "destination": "/api/render?slug=:slug" },
+    { "source": "/administracion", "destination": "/index.csr.html" },
+    { "source": "/administracion/categorias", "destination": "/index.csr.html" },
+    { "source": "/administracion/addons/:id", "destination": "/index.csr.html" },
+    { "source": "/administracion/addons/:id/archivos", "destination": "/index.csr.html" },
+    { "source": "/administracion/addons/:id/publicacion", "destination": "/index.csr.html" },
+    { "source": "/administracion/verificar", "destination": "/index.csr.html" },
+    { "source": "/administracion/restablecer", "destination": "/index.csr.html" }
+  ],
+  "headers": [
+    {
+      "source": "/administracion/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}

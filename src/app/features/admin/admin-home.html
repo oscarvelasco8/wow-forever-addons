@@ -1,0 +1,19 @@
+<section class="container section management">
+  <p><a routerLink="/administracion/categorias">Gestionar categorías ↗</a></p>
+  <header><div><p class="eyebrow">Administración</p><h1>Área de gestión.</h1><p>Prepara las próximas publicaciones de WoW Forever Addons.</p></div><button class="button secondary" [disabled]="busy() || testing()" (click)="logout()">Cerrar sesión</button></header>
+  <section aria-labelledby="drafts-title"><div class="section-heading"><div><p class="eyebrow">Colección editorial</p><h2 id="drafts-title">Todos los addons</h2></div><button class="button secondary" (click)="loadDrafts()" [disabled]="loading() || testing()">Actualizar listado</button></div>
+    @if (loading()) { <p role="status">Cargando borradores…</p> }
+    @else if (loadError()) { <p class="error" role="alert">{{ loadError() }}</p> }
+    @else {
+      <div class="draft-grid">@for (draft of drafts(); track draft.id) {
+        <article><span class="eyebrow">{{draft.status === 'published' ? 'Publicado' : draft.status === 'archived' ? 'Retirado' : 'Borrador · Sin publicar'}}</span><h3>{{ draft.name }}</h3><p>{{ draft.summary }}</p><p class="muted">{{ draft.distribution_approved ? 'Revisión de distribución registrada' : 'Distribución pendiente de revisión' }}</p>@if(draft.status==='draft'){<p><a class="button secondary" [routerLink]="['/administracion/addons', draft.id]">Editar borrador ↗</a></p>}<a class="button secondary" [routerLink]="['/administracion/addons',draft.id,'publicacion']">Revisión y publicación ↗</a></article>
+      } @empty { <p>No hay addons en la colección.</p> }</div>
+    }
+  </section>
+  <details class="diagnostics"><summary>Herramientas de comprobación</summary>
+    <h2>Almacenamiento</h2><p>Sube y elimina archivos de prueba. La comprobación de tamaño envía hasta 50 MiB.</p><button class="button secondary" [disabled]="testing() || busy()" (click)="verifyStorage()">{{ testing() ? 'Comprobando…' : 'Probar Storage real' }}</button>
+    <h2>Publicación y retirada</h2><p>Crea un producto técnico temporal con ZIP vacío y un píxel y elimina sus datos al terminar. No modifica Rumbo.</p><button class="button secondary" [disabled]="testing() || busy()" (click)="verifyPublication()">{{ testing() ? 'Comprobando…' : 'Probar publicación y retirada' }}</button>
+    <div role="status">@for (result of results(); track result) { <p>{{ result }}</p> }</div>
+  </details>
+  <p><a routerLink="/catalogo">Volver al catálogo público</a></p>
+</section>

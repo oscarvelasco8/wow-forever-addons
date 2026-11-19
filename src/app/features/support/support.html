@@ -1,0 +1,43 @@
+<div class="container">
+  <header class="page-heading"><p class="eyebrow">Detrás de cada camino</p><h1>Un pequeño gesto.<br><em>Un viaje que continúa.</em></h1><p>WoW Forever Addons reúne las herramientas que creemos para la comunidad. Tu apoyo ayudará a mantener la plataforma, distribuir los archivos y ampliar el catálogo.</p></header>
+  <section class="support-layout" aria-labelledby="support-title"><div class="pledge"><span class="pledge-mark" aria-hidden="true">✧</span><h2 id="support-title">Todos los addons.<br>Para todos.</h2><p>Aportar será siempre una elección. No desbloqueará funciones, no dará prioridad de descarga y no será necesario para recibir actualizaciones.</p><a class="button secondary" routerLink="/catalogo">Explorar los addons <span aria-hidden="true">↗</span></a></div><div class="support-copy"><p class="eyebrow">Qué ayudas a hacer posible</p><article><span>01</span><div><h3>Desarrollar con cuidado.</h3><p>Dedicar tiempo a corregir errores y mejorar las herramientas.</p></div></article><article><span>02</span><div><h3>Mantener el camino abierto.</h3><p>Sostener el alojamiento y la distribución gratuita de los archivos.</p></div></article><article><span>03</span><div><h3>Seguir explorando.</h3><p>Probar compatibilidad y preparar nuevas mejoras para WoW Forever.</p></div></article></div></section>
+  @if (returnState()) { <p class="notice" role="status">{{ returnState() }}</p> }
+  @if (receiptState() !== 'idle') {
+    <section id="support-receipt" tabindex="-1" class="checkout-panel receipt-panel" aria-labelledby="receipt-title" aria-live="polite">
+      <p class="eyebrow">Comprobación de la aportación · Pruebas</p>
+      @switch (receiptState()) {
+        @case ('paid') { <h2 id="receipt-title">Aportación de prueba confirmada.</h2><p>Gracias. El backend ha registrado {{receiptAmount()! / 100}} € de prueba mediante el webhook de Stripe. No se ha movido dinero real.</p> }
+        @case ('checking') { <h2 id="receipt-title">Comprobando la confirmación…</h2><p>Estamos consultando el registro del servidor. Volver desde Checkout no basta para confirmar el pago.</p> }
+        @case ('pending') { <h2 id="receipt-title">Esperando la confirmación.</h2><p>El webhook puede tardar en llegar. Si ya completaste Checkout, no vuelvas a aportar para intentar confirmarlo.</p><button class="button secondary" (click)="verifyReceipt()">Comprobar otra vez</button> }
+        @case ('expired') { <h2 id="receipt-title">La sesión de prueba ha caducado.</h2><p>No consta como pagada en el registro del servidor.</p> }
+        @case ('failed') { <h2 id="receipt-title">La aportación no se ha confirmado.</h2><p>Stripe notificó un fallo al procesar esta sesión de prueba.</p> }
+        @case ('unavailable') { <h2 id="receipt-title">No podemos comprobarlo ahora.</h2><p>Si ya completaste Checkout, no repitas la aportación. Puedes consultar de nuevo cuando se recupere la conexión.</p><button class="button secondary" (click)="verifyReceipt()">Reintentar comprobación</button> }
+        @default { <h2 id="receipt-title">No podemos verificar este retorno.</h2><p>El verificador de esta pestaña falta o ha caducado. Esto no significa que el pago haya fallado. Si ya completaste Checkout, no repitas la aportación.</p> }
+      }
+      <p>Todos los addons siguen siendo gratuitos, con todas sus funciones y sin ventajas por aportar.</p><a routerLink="/catalogo" class="text-link">Volver al catálogo ↗</a>
+    </section>
+  }
+  @if (receiptState() === 'idle') {
+  <section class="checkout-panel" aria-labelledby="checkout-title" [attr.aria-busy]="busy()">
+    <p class="eyebrow">Aportación puntual · Sin suscripción</p>
+    <h2 id="checkout-title">Un apoyo que tú eliges.</h2>
+    <p>Todos los addons y sus actualizaciones seguirán siendo gratuitos. Aportar no concede acceso ni ventajas.</p>
+    @if (availability() === 'test') {
+      <p class="notice"><strong>Modo de pruebas · No se mueve dinero.</strong><span>Checkout de Stripe se abrirá para una prueba. Utiliza únicamente datos de prueba; nunca una tarjeta real.</span></p>
+      <fieldset [disabled]="busy() || cooldownSeconds() > 0"><legend>Importe de ejemplo</legend><div class="amounts">
+        @for (option of amounts; track option) {
+          <button type="button" class="button secondary" [attr.aria-pressed]="amount() === option" (click)="selectAmount(option)">{{ option / 100 }} €</button>
+        }
+      </div></fieldset>
+      <button type="button" class="button checkout-submit" [disabled]="busy() || cooldownSeconds() > 0" (click)="startCheckout()">{{ busy() ? 'Abriendo Checkout…' : cooldownSeconds() > 0 ? 'Espera ' + cooldownSeconds() + ' s' : 'Probar con ' + amount() / 100 + ' € en Stripe ↗' }}</button>
+      <p class="checkout-note">El formulario de tarjeta estará alojado en Stripe. Esta web no solicita ni guarda los datos de la tarjeta.</p>
+      <p class="checkout-note">La integración está en validación. La confirmación se consulta en el servidor mediante un verificador de esta pestaña.</p>
+      @if (error()) { <p class="notice" role="alert">{{ error() }}</p> }
+    } @else if (availability() === 'loading') {
+      <p role="status">Comprobando disponibilidad…</p>
+    } @else {
+      <p class="notice"><strong>Apoyo a la plataforma · Próximamente.</strong><span>Las aportaciones aún no están disponibles. Esta página no acepta ni procesa dinero.</span></p>
+    }
+  </section>
+  }
+</div>

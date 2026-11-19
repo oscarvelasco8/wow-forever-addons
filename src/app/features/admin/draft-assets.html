@@ -1,0 +1,51 @@
+<section class="container section editor">
+  <a [routerLink]="['/administracion/addons', id,'publicacion']">← Volver a revisión editorial</a>
+  <header><p class="eyebrow">Catálogo · Archivos privados</p><h1>Imágenes y versiones.</h1><p>Prepara los archivos del addon. Las subidas y las versiones nuevas quedan en borrador.</p></header>
+  @if (loading()) { <p role="status">Cargando archivos…</p> }
+  @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+  @if (success()) { <p class="message success" role="status">{{ success() }}</p> }
+  @if (busy()) { <p role="status">Procesando… Espera a que termine antes de cerrar o salir de esta página.</p> }
+  @if (!loading() && !managementReady()) { <p class="draft-note">La gestión segura de archivos está pendiente de habilitar en el servidor. Reemplazar y eliminar permanecen desactivados.</p> }
+  @if (blocked()) { <p class="message error">La respuesta requiere revisión. Recarga antes de realizar otro cambio.</p><button class="button secondary" (click)="load()" [disabled]="busy()">Recargar archivos</button> }
+  @if (pendingCleanup(); as pending) { <section class="panel"><h2>Limpieza pendiente</h2><p>El cambio del borrador está guardado, pero no se ha comprobado la eliminación del archivo anterior.</p><p class="checksum">{{pending.bucket}}/{{pending.path}}</p><button class="button secondary" (click)="retryCleanup()" [disabled]="busy()">Reintentar limpieza</button></section> }
+  @if (review(); as target) {
+    <section class="panel asset-review" aria-labelledby="asset-review-title">
+      <h2 id="asset-review-title" tabindex="-1">{{replacing() ? 'Revisar reemplazo' : 'Revisar eliminación'}}</h2>
+      <p>{{target.kind==='release'?'ZIP de la versión '+$any(target.row).version:$any(target.row).alt_text}}</p>
+      <p>Solo afecta a este archivo en borrador. La operación no publica contenido.</p>
+      @if (replacing()) { <label>Archivo nuevo<input type="file" [accept]="target.kind==='release'?'.zip':'.png,.jpg,.jpeg,.webp'" (change)="replacement.set($any($event.target).files?.[0] ?? null)" [disabled]="busy() || blocked()"></label><p>El archivo anterior se conserva hasta que se asocie el nuevo.</p> }
+      <label>Motivo (12–1000 caracteres)<textarea [value]="note()" (input)="note.set($any($event.target).value)" maxlength="1000" rows="3" [disabled]="busy() || blocked()"></textarea></label>
+      <label class="confirm"><input type="checkbox" [checked]="confirmed()" (change)="confirmed.set($any($event.target).checked)" [disabled]="busy() || blocked()">Entiendo que se eliminará el archivo anterior de Storage y que esta eliminación no tiene papelera.</label>
+      <div class="actions"><button class="button" (click)="confirmChange()" [disabled]="busy() || blocked() || !confirmed() || note().trim().length<12 || (replacing() && !replacement())">{{replacing()?'Confirmar reemplazo':'Confirmar eliminación'}}</button><button class="button secondary" (click)="cancelChange()" [disabled]="busy()">Cancelar</button></div>
+    </section>
+  }
+  @if (!loading() && !bundle()) { <button class="button" (click)="load()">Reintentar</button> }
+  @if (bundle(); as data) {
+    <div class="draft-note"><strong>{{ data.addon.name }} · Subidas privadas</strong><span>Subir un archivo no aprueba su distribución ni lo publica.</span></div>
+    <fieldset class="asset-body" [disabled]="busy() || blocked() || !!review() || !!pendingCleanup() || !managementReady()">
+    <section class="panel"><h2>ZIP de una versión</h2>
+      @if (data.releases.length) {
+        <label>Versión en borrador<select [value]="selectedId()" (change)="selectedId.set($any($event.target).value); zip.set(null); zipInput.value=''" [disabled]="busy()">@for (item of data.releases; track item.id) { <option [value]="item.id">{{ item.version }}{{ item.file_path ? ' · ZIP asociado' : ' · ZIP pendiente' }}</option> }</select></label>
+        @if (release; as item) {
+          @if (item.file_path) { <p>ZIP asociado: {{ item.file_size_bytes }} bytes.</p><p class="checksum">SHA-256: {{ item.sha256 }}</p><p class="muted">Los archivos publicados están protegidos. En borrador puedes preparar un reemplazo o retirar el ZIP sin borrar la versión.</p><div class="actions"><button class="button secondary" (click)="beginChange({kind:'release',row:item},true)" [disabled]="busy() || blocked() || !!pendingCleanup() || !!item.published_at">Reemplazar ZIP</button><button class="button secondary" (click)="beginChange({kind:'release',row:item},false)" [disabled]="busy() || blocked() || !!pendingCleanup() || !!item.published_at">Eliminar ZIP del borrador</button></div> }
+        }
+        <label>Paquete ZIP (hasta 50 MiB)<input #zipInput type="file" accept=".zip,application/zip,application/x-zip-compressed" (change)="selectZip($event)" [disabled]="busy() || !!release?.file_path"></label>
+        <p class="muted">El ZIP debe incluir la carpeta del addon y su archivo .toc. Se comprueban el índice y las rutas sin extraer el contenido. Revisa el paquete dentro del juego antes de publicarlo.</p>
+        <button class="button" type="button" (click)="uploadZip(zipInput)" [disabled]="busy() || !zip() || !release || !!release.file_path">Subir ZIP en borrador</button>
+      } @else { <p>Crea primero una versión en borrador para asociar su ZIP.</p> }
+    </section>
+    <form class="panel" [formGroup]="versionForm" (ngSubmit)="createVersion()" novalidate [attr.aria-busy]="busy()"><h2>Crear una versión</h2>
+      <div class="fields"><label>Número de versión *<input formControlName="version" maxlength="64" [attr.aria-invalid]="versionForm.controls.version.touched && versionForm.controls.version.invalid"></label><label>Cliente compatible declarado *<input formControlName="game_version" maxlength="40" [attr.aria-invalid]="versionForm.controls.game_version.touched && versionForm.controls.game_version.invalid"></label><label>Interfaz *<input formControlName="interface_version" type="number" min="1" max="2147483647" step="1" [attr.aria-invalid]="versionForm.controls.interface_version.touched && versionForm.controls.interface_version.invalid"></label><label class="wide">Novedades<textarea formControlName="changelog" rows="4" maxlength="30000"></textarea></label></div>
+      <button class="button" type="submit" [disabled]="busy()">Crear versión en borrador</button>
+    </form>
+    <form class="panel" [formGroup]="imageForm" (ngSubmit)="uploadImage(imageInput)" novalidate [attr.aria-busy]="busy()"><h2>Añadir una imagen</h2>
+      <label>PNG, JPEG o WebP (hasta 5 MiB)<input #imageInput type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" (change)="selectImage($event)" [disabled]="busy()"></label>
+      <div class="fields"><label class="wide">Texto alternativo *<input formControlName="alt" maxlength="300" [attr.aria-invalid]="imageForm.controls.alt.touched && imageForm.controls.alt.invalid"><small>Describe lo que aporta la imagen; no repitas su nombre de archivo.</small></label><label>Orden en la galería<input type="number" formControlName="order" min="0" max="2147483647" step="1"></label></div>
+      <button class="button" type="submit" [disabled]="busy() || !image()">Subir imagen en borrador</button>
+    </form>
+    <section class="panel"><h2>Imágenes asociadas</h2>
+      <div class="asset-grid">@for (item of images(); track item.id) { <article><p>{{ item.alt_text }}</p><p class="muted">Orden {{ item.sort_order }} · {{ item.is_published ? 'Publicación registrada' : 'Borrador' }}</p>@if (previewUrls()[item.id]; as url) { <img [src]="url" [alt]="item.alt_text"> } @else { <button class="button secondary" (click)="showImage(item.id)" [disabled]="busy()">Ver imagen privada</button> }<div class="actions"><button class="button secondary" (click)="beginChange({kind:'image',row:item},true)" [disabled]="busy() || blocked() || !!pendingCleanup() || item.is_published">Reemplazar imagen</button><button class="button secondary" (click)="beginChange({kind:'image',row:item},false)" [disabled]="busy() || blocked() || !!pendingCleanup() || item.is_published">Eliminar imagen</button></div></article> } @empty { <p>No hay imágenes asociadas.</p> }</div>
+    </section>
+    </fieldset>
+  }
+</section>

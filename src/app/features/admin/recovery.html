@@ -1,0 +1,20 @@
+<app-auth-shell title="Recupera tu acceso." eyebrow="Volver a entrar" description="Indica el correo de tu cuenta para solicitar un enlace de recuperación.">
+  @if (!access.recoveryConfigured) {
+    <div class="connection-note" role="status"><strong>Recuperación no disponible</strong>Este origen no tiene la recuperación configurada. Usa la dirección autorizada del proyecto.</div>
+  }
+  @if (accepted()) {
+    <p class="form-footnote">Abre el enlace en este mismo navegador y dispositivo. Puede abrirse en una pestaña nueva. Evita solicitar otro mientras esperas el correo.</p>
+    <p class="form-success" role="status">Si existe una cuenta habilitada para ese correo, recibirás las instrucciones de recuperación. Revisa también la carpeta de spam.</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate [attr.aria-busy]="busy()">
+      <div class="field"><label for="recovery-email">Correo electrónico</label><input id="recovery-email" type="email" formControlName="email" autocomplete="email" maxlength="254" placeholder="tu@correo.com" [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid" aria-describedby="recovery-error">
+        @if (form.controls.email.touched && form.controls.email.invalid) { <p id="recovery-error" class="field-error">Introduce un correo electrónico válido.</p> }
+      </div>
+      @if (error()) { <p role="alert" class="form-error">{{ error() }}</p> }
+      <button class="button form-button" type="submit" [disabled]="!access.recoveryConfigured || busy()">{{ busy() ? 'Solicitando enlace…' : 'Solicitar enlace' }} <span aria-hidden="true">↗</span></button>
+    </form>
+  }
+  <p class="form-links"><a routerLink="/administracion/acceso">Volver al acceso</a></p>
+  <p class="form-footnote">La recuperación no concede permisos administrativos a cuentas nuevas.</p>
+  <p class="form-footnote">Solicita un solo enlace y espera el correo. Ábrelo en el mismo navegador y dispositivo; puede ser en otra pestaña.</p>
+</app-auth-shell>
