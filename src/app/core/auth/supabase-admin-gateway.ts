@@ -61,6 +61,8 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
   }
 
   async signIn(email: string, password: string): Promise<AccessDecision> {
+    const expiry=Number(localStorage.getItem('wfa-admin-auth-expires-at'));
+    if(expiry&&expiry<=Date.now()){localStorage.removeItem('wfa-admin-auth');localStorage.removeItem('wfa-admin-auth-user');localStorage.removeItem('wfa-admin-auth-expires-at');sessionStorage.removeItem('wfa-admin-auth');}
     const client = await this.client();
     const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) { throw new Error('Sign-in failed.'); }
@@ -125,6 +127,9 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
     } finally {
       // Do not leave credentials in this tab if revocation fails offline.
       sessionStorage.removeItem('wfa-admin-auth');
+      localStorage.removeItem('wfa-admin-auth');
+      localStorage.removeItem('wfa-admin-auth-user');
+      localStorage.removeItem('wfa-admin-auth-expires-at');
       sessionStorage.removeItem('wfa-admin-auth-code-verifier');
       client.auth.stopAutoRefresh();
       this.clientPromise = undefined;

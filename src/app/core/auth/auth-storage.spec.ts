@@ -10,17 +10,27 @@ function memoryStorage(): Storage {
 }
 
 describe('Recovery storage with the installed Supabase SDK', () => {
-  it('shares expiring PKCE material between tabs while keeping sessions isolated', async () => {
+  it('shares remembered sessions and independently expires PKCE material', async () => {
     const shared = memoryStorage();
     let now = 100;
     const first = createAuthStorage(memoryStorage(), shared, () => now);
     const second = createAuthStorage(memoryStorage(), shared, () => now);
     await first.setItem('wfa-admin-auth', 'fake-session');
     await first.setItem('wfa-admin-auth-code-verifier', 'fake-verifier');
-    expect(await second.getItem('wfa-admin-auth')).toBeNull();
+    expect(await second.getItem('wfa-admin-auth')).toBe('fake-session');
     expect(await second.getItem('wfa-admin-auth-code-verifier')).toBe('fake-verifier');
     now += 60 * 60 * 1000;
     expect(await second.getItem('wfa-admin-auth-code-verifier')).toBeNull();
+    expect(await second.getItem('wfa-admin-auth')).toBe('fake-session');
+    now += 7*24*60*60*1000;
+    expect(await second.getItem('wfa-admin-auth')).toBeNull();
+  });
+  it('migrates a tab session, keeps an absolute expiry during refresh and clears every copy on logout',async()=>{
+    const tab=memoryStorage(),shared=memoryStorage();let now=100;tab.setItem('wfa-admin-auth','old-session');
+    const storage=createAuthStorage(tab,shared,()=>now);expect(await storage.getItem('wfa-admin-auth')).toBe('old-session');expect(tab.getItem('wfa-admin-auth')).toBeNull();
+    const expiry=shared.getItem('wfa-admin-auth-expires-at');now+=1000;await storage.setItem('wfa-admin-auth','refreshed-session');expect(shared.getItem('wfa-admin-auth-expires-at')).toBe(expiry);
+    await storage.removeItem('wfa-admin-auth');expect(shared.getItem('wfa-admin-auth')).toBeNull();expect(await storage.getItem('wfa-admin-auth')).toBeNull();
+    const oldTab=memoryStorage();oldTab.setItem('wfa-admin-auth','stale-tab-session');expect(await createAuthStorage(oldTab,shared,()=>now).getItem('wfa-admin-auth')).toBeNull();
   });
 
   it('restores the previous verifier if another request is rate-limited', async () => {
@@ -70,8 +80,8 @@ describe('Recovery storage with the installed Supabase SDK', () => {
     expect(exchange.error).toBeNull();
     expect(recoveryEvent).toBe(true);
     expect(firstTab.getItem('wfa-admin-auth')).toBeNull();
-    expect(secondTab.getItem('wfa-admin-auth')).not.toBeNull();
-    expect(shared.getItem('wfa-admin-auth')).toBeNull();
+    expect(secondTab.getItem('wfa-admin-auth')).toBeNull();
+    expect(shared.getItem('wfa-admin-auth')).not.toBeNull();
     listener.data.subscription.unsubscribe();
     first.auth.stopAutoRefresh(); second.auth.stopAutoRefresh();
   });

@@ -153,9 +153,13 @@ describe('Supabase administrator adapter', () => {
   it('removes tab credentials even when remote sign-out fails', async () => {
     await gateway.checkAccess();
     sessionStorage.setItem('wfa-admin-auth', 'test-session');
+    localStorage.setItem('wfa-admin-auth', 'test-shared-session');
+    localStorage.setItem('wfa-admin-auth-expires-at', '9999999999999');
     mock.auth.signOut.mockResolvedValue({ error: new Error('offline') });
     await expect(gateway.signOut()).rejects.toThrow();
     expect(sessionStorage.getItem('wfa-admin-auth')).toBeNull();
+    expect(localStorage.getItem('wfa-admin-auth')).toBeNull();
+    expect(localStorage.getItem('wfa-admin-auth-expires-at')).toBeNull();
     expect(mock.auth.stopAutoRefresh).toHaveBeenCalled();
   });
 });

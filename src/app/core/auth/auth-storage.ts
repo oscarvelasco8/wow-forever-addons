@@ -4,11 +4,24 @@ const prefix = 'wfa-admin-auth';
 const expirySuffix = '-expires-at';
 export const isPkceKey = (key: string) => key.startsWith(`${prefix}-`) && key.endsWith('-code-verifier');
 
-/** Only short-lived PKCE material is shared between tabs. Sessions stay tab-local. */
+const sessionLifetime = 7 * 24 * 60 * 60 * 1000;
+/** Remember this browser for at most seven days; Auth/RLS still verify every access. */
 export function createAuthStorage(tab: Storage, shared: Storage, now = Date.now): SupportedStorage {
   return {
     getItem(key) {
-      if (!isPkceKey(key)) { return tab.getItem(key); }
+      if (!isPkceKey(key)) {
+        const expires = Number(shared.getItem(prefix + expirySuffix));
+        if (expires && expires <= now()) {
+          shared.removeItem(key); tab.removeItem(key); return null;
+        }
+        const value = shared.getItem(key) ?? (shared.getItem(prefix+'-migrated') ? null : tab.getItem(key));
+        if (value && !expires) {
+          shared.setItem(prefix + expirySuffix, String(now() + sessionLifetime));
+          shared.setItem(key, value); tab.removeItem(key);
+          shared.setItem(prefix+'-migrated','1');
+        }
+        return value;
+      }
       const expires = Number(shared.getItem(key + expirySuffix));
       if (!expires || expires <= now()) {
         shared.removeItem(key); shared.removeItem(key + expirySuffix);
@@ -17,12 +30,15 @@ export function createAuthStorage(tab: Storage, shared: Storage, now = Date.now)
       return shared.getItem(key);
     },
     setItem(key, value) {
-      if (!isPkceKey(key)) { tab.setItem(key, value); return; }
+      if (!isPkceKey(key)) {
+        if (!shared.getItem(prefix + expirySuffix)) shared.setItem(prefix + expirySuffix, String(now() + sessionLifetime));
+        shared.setItem(key, value); shared.setItem(prefix+'-migrated','1'); tab.removeItem(key); return;
+      }
       shared.setItem(key + expirySuffix, String(now() + 60 * 60 * 1000));
       shared.setItem(key, value);
     },
     removeItem(key) {
-      if (!isPkceKey(key)) { tab.removeItem(key); return; }
+      if (!isPkceKey(key)) { tab.removeItem(key); shared.removeItem(key); if(key===prefix){shared.removeItem(prefix + expirySuffix);shared.setItem(prefix+'-migrated','1');} return; }
       shared.removeItem(key); shared.removeItem(key + expirySuffix);
     },
   };

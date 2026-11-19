@@ -21,6 +21,10 @@ const configure = (adapter?: AdminAuthGateway) => TestBed.configureTestingModule
 });
 
 describe('Administrative access preparation', () => {
+  it('restores a verified session on the login page without asking for the password again',async()=>{
+    const signIn=vi.fn();configure(gateway({checkAccess:async()=>'admin',signIn}));const navigate=vi.spyOn(TestBed.inject(Router),'navigateByUrl').mockResolvedValue(true);
+    const page=TestBed.createComponent(AdminLogin).componentInstance;await page.restore();expect(navigate).toHaveBeenCalledWith('/administracion');expect(signIn).not.toHaveBeenCalled();
+  });
   it('does not send credentials or recovery requests without a configured provider', async () => {
     const signIn = vi.fn();
     const recovery = vi.fn();

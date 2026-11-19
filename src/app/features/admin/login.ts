@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AdminAccess } from '../../core/auth/admin-access';
@@ -16,6 +16,7 @@ export class AdminLogin {
   private readonly router = inject(Router);
   private readonly fb = inject(NonNullableFormBuilder);
   readonly busy = signal(false);
+  readonly restoring = signal(false);
   readonly showPassword = signal(false);
   readonly error = signal('');
   readonly form = this.fb.group({
@@ -25,10 +26,22 @@ export class AdminLogin {
 
   constructor() {
     if (!this.access.configured) { this.form.disable({ emitEvent: false }); }
+    afterNextRender(()=>{void this.restore();});
+  }
+
+  async restore(): Promise<void> {
+    if(!this.access.configured||this.busy())return;
+    this.restoring.set(true);
+    try {
+      const result=await this.access.checkAccess();
+      if(result==='admin')await this.router.navigateByUrl('/administracion');
+      else if(result==='mfa-required')await this.router.navigateByUrl('/administracion/verificar');
+      else if(result==='forbidden')await this.router.navigateByUrl('/administracion/denegado');
+    }finally{this.restoring.set(false);}
   }
 
   async submit(): Promise<void> {
-    if (!this.access.configured || this.busy()) { return; }
+    if (!this.access.configured || this.busy() || this.restoring()) { return; }
     this.error.set('');
     this.form.markAllAsTouched();
     if (this.form.invalid) { this.error.set('Revisa el correo y la contraseña antes de continuar.'); return; }

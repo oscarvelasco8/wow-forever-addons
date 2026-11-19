@@ -1,5 +1,20 @@
 # Memoria de continuidad
 
+## Sesión administrativa integrada por separado — en curso19/11
+
+- Usuario insiste en que Acceso del equipo siempre pide login. Causa observada en main: footer dirigía a /administracion/acceso y login no intentaba restaurar sesión; almacenamiento seguía solo por pestaña. Arreglo existía en rama aplazada, aún no productivo.
+- Se separa únicamente arreglo de sesión de3c1a098 a main, conservando permiso de recuperación Vercel7774aeb. No integrar catálogo ni asistente de publicación todavía. Footer ahora /administracion pasa por guard; login directo intenta restaurar getUser/admin_access. Sesión recordada hasta7d con caducidad absoluta, migración antigua de pestaña, logout limpia ambas copias y marcador impide resucitar sesión desde pestaña antigua. PKCE1h separado. No almacenar ni mostrar contraseñas/códigos.
+- Validación Angular88 PASS y suite completa en curso. Se mantienen comprobaciones de pertenencia y MFA en backend; no modificar Supabase Auth remoto. Recuperación por correo sigue aplazada por usuario, sin nuevas solicitudes.
+- Después de desplegar: usuario puede necesitar un primer login para crear sesión recordada; comprobar retorno desde catálogo y nueva pestaña sin volver a pedir contraseña. No afirmar prueba real hasta observarla. Captura sin credenciales tras revisión visual.
+
+
+## Recuperación aplazada tras nuevo intento — 19/11
+
+- Usuario solicitó enlace en navegador integrado, lo abrió primero en otro navegador y recibió falta de comprobación local. Después lo abrió en integrado y obtuvo enlace no validado/caducado/usado/anterior. No confirmó cambio de contraseña ni nuevo login.
+- Usuario decide dejarlo pendiente. No solicitar más correos ni seguir probando ahora. Primera apertura puede haber consumido enlace, pero no se ha corroborado causa exacta; no afirmar que esperar o reiniciar límite de correo resolverá validación. Enlaces usados no se restablecen al esperar.
+- Configuración de retorno Vercel y formulario habilitado sí comprobados; recuperación de extremo a extremo NO aprobada. Próximo cuando usuario retome: un enlace nuevo pedido y abierto exclusivamente en mismo navegador, sin apertura previa externa, y diagnóstico seguro de código de error si vuelve a fallar. Nunca registrar URL de enlace, verifier, contraseñas o códigos. Tres mejoras de usabilidad continúan en rama separada sin revisión visual final.
+
+
 ## Recuperación Vercel: configuración confirmada — 19/11
 
 - Propietario guardó Auth URL Configuration. Comprobación visual de la página abierta Supabase: Site URL https://wow-forever-addons.vercel.app, Save changes deshabilitado, Redirect URLs contiene exactamente https://wow-forever-addons.vercel.app/administracion/restablecer. No comodines ni claves, lectura sin modificar ajustes.
@@ -423,3 +438,5 @@ Resultado confirmado en producción tras e28931b:18/18 comprobaciones HTTP anón
 Captura fase9-404-vercel-real.jpg comprobada visualmente en Chrome: página pública realmente alojada en /no-existe, no fixture ni sesión administrativa. HTTP404 confirmado por petición independiente. Capturas anteriores preservadas. Siguiente: revisión visual y acceso/MFA del propietario en entorno alojado; recuperación sigue pendiente.
 
 Despliegue d8c9357 comprobado: ruta nueva200 con no-store/noindex y ruta presente en bundle alojado (nombre de componente minificado no localizado por búsqueda literal). Smoke público18/18 PASS. Creación real con sesión administrativa queda pendiente de que propietario use Nuevo addon; no afirmar INSERT real probado.
+
+7774aeb desplegado en main; status Vercel success. Revisada visualmente página real /administracion/recuperar en navegador integrado: tras hidratación desaparece aviso de origen y campo correo/botón Solicitar enlace habilitados. Captura fase4-recuperacion-vercel-habilitada.jpg sin correos/códigos, guardada en workspace principal. Nueva herramienta CUA permite ahora leer pestaña integrada, a diferencia del bloqueo Windows anterior; no extrapolar a revisión de tres mejoras (sigue aplazada). Se deja pestaña como handoff para usuario. Siguiente: usuario solicita solo un correo nuevo, usa enlace en mismo navegador/dispositivo, completa MFA y contraseña manualmente y confirma nuevo login. No se ha solicitado correo ni cambiado contraseña por agente; recuperación no cerrada todavía.
