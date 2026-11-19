@@ -359,6 +359,41 @@ test('catalog migrations and publication permissions in PostgreSQL', async (cont
     assert.ok((await administrator('select count(*)::int as n from public.editorial_events where addon_id=$1 and note=$2',[a,'Reemplazo local revisado'])).rows[0].n>0);
   });
 
+  await context.test('permanent deletion hides first, blocks reattachment, requires Storage cleanup and retains audit', async () => {
+    const a='85000000-0000-4000-8000-000000000001',r='85000000-0000-4000-8000-000000000002',im='85000000-0000-4000-8000-000000000003';
+    const zip=`${a}/${r}.zip`,image=`${a}/${im}.png`;
+    await administrator("insert into public.addons(id,slug,name,category_id,summary,author_name,license_name) select $1,'delete-local','Eliminar local',category_id,'Resumen','Autor','Permiso de prueba' from public.addons where id=$2",[a,addon]);
+    await administrator("insert into public.addon_releases(id,addon_id,version,game_version,interface_version,file_path,file_size_bytes,sha256) values($1,$2,'1','Test',1,$3,10,$4)",[r,a,zip,'a'.repeat(64)]);
+    await administrator("insert into public.addon_images(id,addon_id,file_path,alt_text) values($1,$2,$3,'Imagen de prueba')",[im,a,image]);
+    await administrator("insert into storage.objects(bucket_id,name) values('addon-files',$1),('addon-images',$2)",[zip,image]);
+    await administrator("update public.addon_releases set status='published',published_at=now() where id=$1",[r]);
+    await administrator("update public.addon_images set is_published=true where id=$1",[im]);
+    await administrator("update public.addons set status='published',published_at=now(),distribution_approved=true where id=$1",[a]);
+    const stamp=(await administrator('select updated_at from public.addons where id=$1',[a])).rows[0].updated_at;
+    const begin='select public.begin_addon_deletion($1,$2,$3) as value',args=[a,stamp,'Eliminar local'];
+    await assert.rejects(anonymous(begin,args));await assert.rejects(signedIn(begin,args),/ADDON_DELETE_DENIED/);
+    await assert.rejects(db.transaction(async tx=>{await tx.exec('set local role authenticated');await tx.query("select set_config('request.jwt.claim.sub',$1,true)",[admin]);await tx.exec("select set_config('request.jwt.claim.aal','aal1',true)");await tx.query(begin,args);}),/ADDON_DELETE_DENIED/);
+    await assert.rejects(administrator(begin,[a,stamp,'Otro nombre']),/ADDON_NAME_REQUIRED/);
+    await assert.rejects(administrator(begin,[a,'2000-01-01','Eliminar local']),/ADDON_DELETE_CONFLICT/);
+    const prepared=(await administrator(begin,args)).rows[0].value;assert.equal(prepared.files.length,2);
+    assert.equal((await anonymous('select id from public.addons where id=$1',[a])).rows.length,0);
+    assert.equal((await administrator('select id from public.addon_releases where addon_id=$1',[a])).rows.length,0);
+    assert.ok((await administrator('select public.addon_deletion_pending() as value')).rows[0].value.includes(a));
+    await assert.rejects(administrator("update public.addons set name='Changed' where id=$1",[a]),/ADDON_DELETING/);
+    await assert.rejects(administrator("insert into storage.objects(bucket_id,name) values('addon-files',$1)",[`${a}/${r}/85000000-0000-4000-8000-000000000004.zip`]));
+    await assert.rejects(administrator('select public.finish_addon_deletion($1,$2)',[a,'Eliminar local']),/ADDON_CLEANUP_PENDING/);
+    await assert.rejects(administrator('delete from public.addons where id=$1',[a]),/ADDON_CLEANUP_PENDING/);
+    assert.equal((await administrator(begin,args)).rows[0].value.files.length,2);
+    // Local PostgreSQL fixture metadata only, not a remote Storage deletion.
+    await administrator("delete from storage.objects where name in ($1,$2)",[zip,image]);
+    assert.equal((await administrator('select public.finish_addon_deletion($1,$2) as value',[a,'Eliminar local'])).rows[0].value,true);
+    await assert.rejects(administrator("insert into public.addons(id,slug,name,category_id,summary,author_name) select $1,'reused-delete','Reused',category_id,'Resumen','Autor' from public.addons where id=$2",[a,addon]),/ADDON_DELETING/);
+    assert.equal((await administrator('select id from public.addons where id=$1',[a])).rows.length,0);
+    assert.ok((await administrator("select count(*)::int as n from public.editorial_events where addon_id=$1 and operation='DELETE'",[a])).rows[0].n>=3);
+    assert.equal((await administrator(begin,args)).rows[0].value.deleted,true);
+    assert.equal((await administrator('select public.finish_addon_deletion($1,$2) as value',[a,'Eliminar local'])).rows[0].value,true);
+  });
+
   await context.test('revoking membership takes effect for the same authenticated subject', async () => {
     await db.query('delete from private.admin_users where user_id=$1', [admin]);
     assert.equal((await administrator('select private.is_admin() as allowed')).rows[0].allowed, false);

@@ -1,19 +1,202 @@
 <section class="container section management">
-  <header><div><p class="eyebrow">Administración</p><h1>Área de gestión.</h1><p>Prepara las próximas publicaciones de WoW Forever Addons.</p></div><button class="button secondary" [disabled]="busy() || testing()" (click)="logout()">Cerrar sesión</button></header>
-  <nav class="management-actions" aria-label="Acciones de gestión"><a class="button" routerLink="/administracion/addons/nuevo">Nuevo addon ↗</a><a class="button secondary" routerLink="/administracion/categorias">Gestionar categorías ↗</a></nav>
-  <section aria-labelledby="drafts-title"><div class="collection-heading"><div><p class="eyebrow">Colección editorial</p><h2 id="drafts-title">Todos los addons</h2></div><button class="button secondary" (click)="loadDrafts()" [disabled]="loading() || testing()">Actualizar listado</button></div>
-    @if (loading()) { <p role="status">Cargando borradores…</p> }
-    @else if (loadError()) { <p class="error" role="alert">{{ loadError() }}</p> }
-    @else {
-      <div class="draft-grid">@for (draft of drafts(); track draft.id) {
-        <article><div class="addon-copy"><span class="eyebrow">{{draft.status === 'published' ? 'Publicado' : draft.status === 'archived' ? 'Retirado' : 'Borrador · Sin publicar'}}</span><h3>{{ draft.name }}</h3><p>{{ draft.summary }}</p><p class="muted">{{ draft.distribution_approved ? 'Permiso de distribución confirmado' : 'Permiso pendiente de confirmar al publicar' }}</p></div><div class="addon-actions">@if(draft.status==='draft'){<a class="button" [routerLink]="['/administracion/addons', draft.id,'preparar']">Preparar y publicar ↗</a>}<a class="button secondary" [routerLink]="['/administracion/addons', draft.id]">Editar ficha ↗</a><a class="button secondary" [routerLink]="['/administracion/addons',draft.id,'publicacion']">{{draft.status==='published'?'Gestionar publicación':'Historial y opciones'}} ↗</a></div></article>
-      } @empty { <p>No hay addons en la colección.</p> }</div>
+  <header>
+    <div>
+      <p class="eyebrow">Administración</p>
+      <h1>Área de gestión.</h1>
+      <p>Prepara las próximas publicaciones de WoW Forever Addons.</p>
+    </div>
+    <button class="button secondary" [disabled]="busy() || testing()" (click)="logout()">
+      Cerrar sesión
+    </button>
+  </header>
+  <nav class="management-actions" aria-label="Acciones de gestión">
+    <a class="button" routerLink="/administracion/addons/nuevo">Nuevo addon ↗</a
+    ><a class="button secondary" routerLink="/administracion/categorias">Gestionar categorías ↗</a>
+  </nav>
+  @if (actionError()) {
+    <p class="action-message error" role="alert">{{ actionError() }}</p>
+  }
+  @if (actionSuccess()) {
+    <p class="action-message success" role="status">{{ actionSuccess() }}</p>
+  }
+  @if (action(); as selected) {
+    <section
+      id="quick-action-confirm"
+      class="quick-confirm"
+      tabindex="-1"
+      aria-labelledby="quick-action-title"
+    >
+      <p class="eyebrow">Confirmar acción</p>
+      <h2 id="quick-action-title">
+        {{ selected.kind === 'delete' ? 'Eliminar definitivamente' : 'Despublicar' }} «{{
+          selected.addon.name
+        }}»
+      </h2>
+      @if (selected.kind === 'delete') {
+        <p>
+          Se eliminarán la ficha, todas sus versiones, ZIP e imágenes. No podrás deshacerlo. El
+          historial administrativo se conserva.
+        </p>
+        <label for="delete-addon-name"
+          >Escribe <strong>{{ selected.addon.name }}</strong> para confirmar</label
+        ><input
+          id="delete-addon-name"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength="100"
+          [ngModel]="typedName()"
+          (ngModelChange)="typedName.set($event)"
+          [disabled]="busy()"
+        />
+      } @else {
+        <p>
+          Dejará de aparecer en el catálogo y no permitirá nuevas descargas. Sus archivos se
+          conservan. Los enlaces emitidos pueden durar hasta 60 segundos.
+        </p>
+      }
+      <div class="confirm-actions">
+        <button
+          type="button"
+          class="button"
+          [class.danger]="selected.kind === 'delete'"
+          [disabled]="busy() || (selected.kind === 'delete' && typedName() !== selected.addon.name)"
+          (click)="confirmAction()"
+        >
+          {{
+            busy()
+              ? 'Procesando…'
+              : selected.kind === 'delete'
+                ? 'Eliminar definitivamente'
+                : 'Confirmar despublicación'
+          }}</button
+        ><button
+          type="button"
+          class="button secondary"
+          [disabled]="busy()"
+          (click)="action.set(null)"
+        >
+          Cancelar
+        </button>
+      </div>
+      @if (busy()) {
+        <p role="status">Comprobando y procesando la operación. No cierres esta página.</p>
+      }
+    </section>
+  }
+  <section aria-labelledby="drafts-title">
+    <div class="collection-heading">
+      <div>
+        <p class="eyebrow">Colección editorial</p>
+        <h2 id="drafts-title">Todos los addons</h2>
+      </div>
+      <button class="button secondary" (click)="loadDrafts()" [disabled]="loading() || testing()">
+        Actualizar listado
+      </button>
+    </div>
+    @if (loading()) {
+      <p role="status">Cargando borradores…</p>
+    } @else if (loadError()) {
+      <p class="error" role="alert">{{ loadError() }}</p>
+    } @else {
+      <div class="draft-grid">
+        @for (draft of drafts(); track draft.id) {
+          <article>
+            <div class="addon-copy">
+              <span class="eyebrow">{{
+                pendingDeletions().includes(draft.id)
+                  ? 'Eliminación pendiente'
+                  : draft.status === 'published'
+                    ? 'Publicado'
+                    : draft.status === 'archived'
+                      ? 'Retirado'
+                      : 'Borrador · Sin publicar'
+              }}</span>
+              <h3>{{ draft.name }}</h3>
+              <p>{{ draft.summary }}</p>
+              <p class="muted">
+                {{
+                  pendingDeletions().includes(draft.id)
+                    ? 'Oculto. Reanuda la limpieza para terminar.'
+                    : draft.distribution_approved
+                      ? 'Permiso de distribución confirmado'
+                      : 'Permiso pendiente de confirmar al publicar'
+                }}
+              </p>
+            </div>
+            <div class="addon-actions">
+              @if (!pendingDeletions().includes(draft.id)) {
+                @if (draft.status === 'draft') {
+                  <a class="button" [routerLink]="['/administracion/addons', draft.id, 'preparar']"
+                    >Preparar y publicar ↗</a
+                  ><a class="button secondary" [routerLink]="['/administracion/addons', draft.id]"
+                    >Editar ficha ↗</a
+                  >
+                }
+                <a
+                  class="button secondary"
+                  [routerLink]="['/administracion/addons', draft.id, 'archivos']"
+                  >Archivos y versiones ↗</a
+                >
+                <a
+                  class="button secondary"
+                  [routerLink]="['/administracion/addons', draft.id, 'publicacion']"
+                  >Historial y opciones ↗</a
+                >
+                @if (draft.status === 'published') {
+                  <button
+                    type="button"
+                    class="button secondary"
+                    [disabled]="busy() || testing()"
+                    (click)="openAction('withdraw', draft)"
+                  >
+                    Despublicar
+                  </button>
+                }
+              }
+              <button
+                type="button"
+                class="button secondary danger"
+                [disabled]="busy() || testing() || !deletionReady()"
+                (click)="openAction('delete', draft)"
+              >
+                {{
+                  pendingDeletions().includes(draft.id) ? 'Continuar eliminación' : 'Eliminar addon'
+                }}
+              </button>
+            </div>
+          </article>
+        } @empty {
+          <p>No hay addons en la colección.</p>
+        }
+      </div>
     }
   </section>
-  <details class="diagnostics"><summary>Herramientas de comprobación</summary>
-    <h2>Almacenamiento</h2><p>Sube y elimina archivos de prueba. La comprobación de tamaño envía hasta 50 MiB.</p><button class="button secondary" [disabled]="testing() || busy()" (click)="verifyStorage()">{{ testing() ? 'Comprobando…' : 'Probar Storage real' }}</button>
-    <h2>Publicación y retirada</h2><p>Crea un producto técnico temporal con ZIP vacío y un píxel y elimina sus datos al terminar. No modifica Rumbo.</p><button class="button secondary" [disabled]="testing() || busy()" (click)="verifyPublication()">{{ testing() ? 'Comprobando…' : 'Probar publicación y retirada' }}</button>
-    <div role="status">@for (result of results(); track result) { <p>{{ result }}</p> }</div>
+  @if (!loading() && !deletionReady()) {
+    <p class="error">
+      La eliminación no está disponible ahora. Actualiza el listado o comprueba tu sesión.
+    </p>
+  }
+  <details class="diagnostics">
+    <summary>Herramientas de comprobación</summary>
+    <h2>Almacenamiento</h2>
+    <p>Sube y elimina archivos de prueba. La comprobación de tamaño envía hasta 50 MiB.</p>
+    <button class="button secondary" [disabled]="testing() || busy()" (click)="verifyStorage()">
+      {{ testing() ? 'Comprobando…' : 'Probar Storage real' }}
+    </button>
+    <h2>Publicación y retirada</h2>
+    <p>
+      Crea un producto técnico temporal con ZIP vacío y un píxel y elimina sus datos al terminar. No
+      modifica Rumbo.
+    </p>
+    <button class="button secondary" [disabled]="testing() || busy()" (click)="verifyPublication()">
+      {{ testing() ? 'Comprobando…' : 'Probar publicación y retirada' }}
+    </button>
+    <div role="status">
+      @for (result of results(); track result) {
+        <p>{{ result }}</p>
+      }
+    </div>
   </details>
   <p><a routerLink="/catalogo">Volver al catálogo público</a></p>
 </section>

@@ -250,8 +250,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      addon_deletion_pending: { Args: never; Returns: Json }
       admin_access: { Args: never; Returns: string }
       admit_support_test_checkout: { Args: never; Returns: Json }
+      begin_addon_deletion: {
+        Args: { p_addon: string; p_expected: string; p_name: string }
+        Returns: Json
+      }
       catalog_page: {
         Args: {
           p_after_name?: string
@@ -310,6 +315,10 @@ export type Database = {
           p_order?: number
         }
         Returns: Json
+      }
+      finish_addon_deletion: {
+        Args: { p_addon: string; p_name: string }
+        Returns: boolean
       }
       read_support_test_status: {
         Args: { p_session_id: string }

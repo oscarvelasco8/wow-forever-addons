@@ -192,6 +192,8 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
   }
   async listDrafts() { const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).listDrafts(client); }
   async listEditorial() { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).listEditorial(client); }
+  async loadDeletionStatus(){const client=await this.draftClient();return(await import('../catalog/addon-deletion')).loadDeletionStatus(client);}
+  async deleteAddon(addon:import('../catalog/admin-drafts').DraftAddon,name:string){const client=await this.draftClient();return(await import('../catalog/addon-deletion')).deleteAddon(client,addon,name);}
   async loadCategories() { const client=await this.draftClient();return (await import('../catalog/admin-categories')).loadCategories(client); }
   async saveCategory(input:CategoryInput,note:string) { const client=await this.draftClient();try{return await (await import('../catalog/admin-categories')).saveCategory(client,input,note);}finally{announceCatalogChange();} }
   async loadAssetBundle(id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-assets')).loadAssetBundle(client,id); }

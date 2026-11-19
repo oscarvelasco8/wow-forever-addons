@@ -30,6 +30,8 @@ bootstrapApplication(App,{providers:[
   {provide:SupabaseAdminGateway,useValue:{
     loadEditorial:async()=>structuredClone(fixture),
     listEditorial:async()=>[structuredClone(fixture.addon)],
+    loadDeletionStatus:async()=>({ready:true,pending:[]}),
+    deleteAddon:async()=>{throw new Error('Esta vista previa no elimina contenido.');},
     loadCategories:async()=>({categories:[structuredClone(fixture.category)]}),
     createDraft:async()=>{throw new Error('Esta vista previa no guarda cambios.');},
     publishPreparedAddon:async()=>{throw new Error('Esta vista previa no publica contenido.');},

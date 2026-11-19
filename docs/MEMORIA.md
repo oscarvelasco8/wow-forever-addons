@@ -1,5 +1,13 @@
 # Memoria de continuidad
 
+## Acciones rápidas — 20/11
+
+- Implementadas en cada tarjeta: Eliminar addon (también borradores), Despublicar para publicados y accesos a archivos/versiones e historial. Borrado exige escribir el nombre exacto; despublicar mantiene archivos. Listado y catálogo se actualizan después de la operación.
+- Migración14 `20261119230134_addon_permanent_deletion.sql` aplicada a Supabase. Borrado en dos fases con autorización administrativa y MFA: ocultar/retirar hijos, eliminar objetos mediante API Storage, comprobar ausencia y borrar ficha. Auditoría y marcador privado se conservan. Si falla la limpieza, queda oculto y aparece Continuar eliminación. Bloqueos serializan subidas y eliminación; no se eliminan objetos remotos por SQL.
+- Validación local completa:20 API/25 SQL/106 Angular/1 SSR/2 empaquetado; check:release14/14. Pruebas incluyen permisos anon/no miembro/aal1, conflicto de edición, archivos pendientes, reanudación y ausencia final. Remoto: funciones invoker sin permiso anon, cero eliminaciones pendientes. No se ha eliminado ningún addon real ni probado aún el borrado completo con sesión administrativa alojada.
+- Revisión visual del navegador completada con datos ficticios: tarjeta publicada en escritorio, confirmación irreversible y borrador en móvil390px sin desbordamiento. Capturas `fase7-acciones-rapidas-preview-escritorio.jpg`, `fase7-eliminar-confirmacion-preview.jpg`, `fase7-acciones-rapidas-preview-movil.jpg`. No son capturas de sesión real. Servidor auxiliar4201 se detendrá al cerrar;4200 conservado.
+- Pendiente inmediato: subir a main, comprobar Vercel y smoke público, y propietario probar la acción sobre un addon prescindible. Recuperación de contraseña sigue aplazada y Stripe desactivado.
+
 ## Todas las mejoras publicadas — cierre19/11
 
 - main desplegado da68668e86d7a75bbf112d0c82214ad407b5497d, status Vercel success. Sesión recordada, actualización del catálogo y publicación guiada integradas, conservando origen de recuperación Vercel y controles MFA/RLS. Ya no están solo en rama de pruebas.
