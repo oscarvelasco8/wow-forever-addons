@@ -1,4 +1,5 @@
-import { Injectable, TransferState, makeStateKey, inject, signal } from '@angular/core';
+import { Injectable, TransferState, makeStateKey, inject, signal, afterNextRender, DestroyRef } from '@angular/core';
+import {watchCatalogChanges} from './catalog-updates';
 import type { PublicAddon } from './public-catalog.types';
 export interface CatalogSnapshot {
   slug: string;
@@ -14,6 +15,14 @@ export class PublicAddonDetail {
   private controller?: AbortController;
   private generation = 0;
   constructor() {
+    const destroy=inject(DestroyRef);
+    afterNextRender(()=>{
+      const visible=()=>{if(this.slug&&!this.controller&&document.visibilityState!=='hidden'&&location.pathname.startsWith('/addons/'))void this.load(this.slug,true);};
+      const changed=()=>{this.controller?.abort();this.controller=undefined;this.generation++;this.addons.set([]);this.state.set('loading');visible();};
+      const stop=watchCatalogChanges(changed);window.addEventListener('focus',visible);document.addEventListener('visibilitychange',visible);const timer=setInterval(visible,30000);
+      window.addEventListener('pageshow',visible);
+      destroy.onDestroy(()=>{stop();clearInterval(timer);window.removeEventListener('focus',visible);window.removeEventListener('pageshow',visible);document.removeEventListener('visibilitychange',visible);});
+    });
     const transfer = inject(TransferState),
       snapshot = transfer.get(CATALOG_SNAPSHOT, null);
     transfer.remove(CATALOG_SNAPSHOT);
@@ -32,14 +41,13 @@ export class PublicAddonDetail {
     }
     await this.load(slug);
   }
-  async load(slug = this.slug): Promise<void> {
+  async load(slug = this.slug,quiet=false): Promise<void> {
     this.controller?.abort();
     const controller = new AbortController();
     this.controller = controller;
     this.slug = slug;
     const generation = ++this.generation;
-    this.state.set('loading');
-    this.addons.set([]);
+    if(!quiet){this.state.set('loading');this.addons.set([]);}
     try {
       const response = await fetch('/api/addon?slug=' + encodeURIComponent(slug), {
         credentials: 'omit',
@@ -59,6 +67,7 @@ export class PublicAddonDetail {
       }
     } catch {
       if (generation === this.generation) {
+        this.addons.set([]);
         this.state.set('error');
       }
     } finally {

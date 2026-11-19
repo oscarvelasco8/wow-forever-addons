@@ -12,4 +12,4 @@ import { PageSeo } from '../../core/seo/page-seo';
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Home { readonly catalog = inject(PublicCatalog);constructor(){afterNextRender(()=>{void this.catalog.ensure();});inject(PageSeo).update({title:'WoW Forever Addons | Herramientas de la comunidad',description:'Explora addons gratuitos para WoW Forever. Todas sus funciones, sin cuenta ni pago, con apoyo voluntario al proyecto.',path:'/'});} }
+export class Home { readonly catalog = inject(PublicCatalog);constructor(){afterNextRender(()=>{void this.catalog.load('','');});inject(PageSeo).update({title:'WoW Forever Addons | Herramientas de la comunidad',description:'Explora addons gratuitos para WoW Forever. Todas sus funciones, sin cuenta ni pago, con apoyo voluntario al proyecto.',path:'/'});} }

@@ -1,0 +1,191 @@
+<section class="container section editor prepare">
+  <a routerLink="/administracion">← Volver a gestión</a>
+  <header>
+    <p class="eyebrow">Nuevo addon · Paso 2 de 2</p>
+    <h1>Añade el ZIP. Publícalo.</h1>
+    <p>
+      La versión y los pasos de publicación se preparan por ti. Todo sigue privado hasta que
+      confirmes.
+    </p>
+  </header>
+  @if (loading()) {
+    <p role="status">Cargando tu addon…</p>
+  }
+  @if (error()) {
+    <p class="message error" role="alert">{{ error() }}</p>
+  }
+  @if (progress()) {
+    <p class="message" role="status">{{ progress() }} No cierres esta página.</p>
+  }
+  @if (success()) {
+    <p class="message success" role="status">{{ success() }}</p>
+  }
+  @if (blocked()) {
+    <button class="button secondary" (click)="load()">Comprobar estado y continuar</button>
+  }
+  @if (bundle(); as data) {
+    @if (data.addon.status === 'published') {
+      <article class="panel">
+        <p class="eyebrow">Publicado</p>
+        <h2>{{ data.addon.name }}</h2>
+        <p>Tu ficha y su descarga ya son públicas.</p>
+        <a class="button" [routerLink]="['/addons', data.addon.slug]">Ver en la web ↗</a>
+        <p>
+          <a [routerLink]="['/administracion/addons', id, 'publicacion']"
+            >Gestionar publicación y retirada</a
+          >
+        </p>
+      </article>
+    } @else {
+      <div class="draft-note">
+        <strong>{{ data.addon.name }} · Borrador privado</strong
+        ><span>{{ data.addon.summary }}</span
+        ><a [routerLink]="['/administracion/addons', id]">Editar ficha</a>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="finish(true)" [attr.aria-busy]="busy()" novalidate>
+        <fieldset class="asset-body" [disabled]="busy() || blocked() || reading()">
+          <section class="panel">
+            <h2>1. Archivo del addon</h2>
+            @if (data.releases.length) {
+              <label
+                >Versión preparada<select
+                  [value]="selected()"
+                  (change)="selected.set($any($event.target).value)"
+                >
+                  <option value="">Nueva versión a partir del ZIP</option>
+                  @for (r of data.releases; track r.id) {
+                    @if (r.status !== 'archived') {
+                      <option [value]="r.id">
+                        {{ r.version }}{{ r.file_path ? ' · ZIP guardado' : ' · falta ZIP' }}
+                      </option>
+                    }
+                  }
+                </select></label
+              >
+            }
+            @if (release()?.file_path) {
+              <p class="message success">ZIP guardado · {{ release()?.file_size_bytes }} bytes</p>
+            } @else {
+              <label
+                >ZIP (hasta 50 MiB)<input
+                  #zipFile
+                  type="file"
+                  accept=".zip,application/zip"
+                  (change)="chooseZip($event)"
+              /></label>
+              <p class="muted">
+                Incluye la carpeta del addon y su archivo .toc. Leemos la versión y la interfaz si
+                están indicadas.
+              </p>
+            }
+            @if (reading()) {
+              <p role="status">Leyendo el ZIP…</p>
+            }
+            @if (zip()) {
+              <p role="status">Seleccionado: {{ zip()?.name }}</p>
+            }
+            @if (metadataRead()) {
+              <p>
+                Versión {{ form.controls.version.value }} · Interfaz
+                {{ form.controls.interface_version.value }}, leídas del ZIP.
+              </p>
+            }
+            @if (!selected()) {
+              <details [open]="!!zip() && !metadataRead()">
+                <summary>Detalles de la versión</summary>
+                <p>Comprueba la compatibilidad antes de publicar.</p>
+                <div class="fields">
+                  <label>Versión<input formControlName="version" maxlength="64" /></label
+                  ><label
+                    >Cliente compatible<input
+                      formControlName="game_version"
+                      maxlength="40" /></label
+                  ><label
+                    >Interfaz<input
+                      type="number"
+                      formControlName="interface_version"
+                      min="1"
+                      max="2147483647"
+                      step="1" /></label
+                  ><label class="wide"
+                    >Novedades (opcional)<textarea
+                      formControlName="changelog"
+                      maxlength="30000"
+                      rows="3"
+                    ></textarea>
+                  </label>
+                </div>
+              </details>
+            }
+          </section>
+          <section class="panel">
+            <h2>2. Imagen (opcional)</h2>
+            <p>Puedes añadirla ahora o más adelante.</p>
+            <label
+              >Imagen PNG, JPEG o WebP (hasta 5 MiB)<input
+                #imageFile
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                (change)="chooseImage($event)"
+            /></label>
+            @if (image()) {
+              <label
+                >Descripción de la imagen<input
+                  formControlName="alt"
+                  maxlength="300"
+                  placeholder="Qué se ve en la imagen"
+              /></label>
+            }
+            @if (data.images.length) {
+              <p>{{ data.images.length }} imagen(es) ya guardada(s).</p>
+            }
+            <label class="check"
+              ><input
+                type="checkbox"
+                [checked]="includeImages()"
+                (change)="includeImages.set($any($event.target).checked)"
+              />
+              Mostrar las imágenes preparadas al publicar</label
+            >
+          </section>
+          <section class="panel final-step">
+            <h2>3. Mostrar en la web</h2>
+            <p>
+              La descarga será gratuita para todos. No necesitas elegir una licencia para continuar:
+              sí confirmar que puedes distribuir el contenido. Si ya indicaste una licencia, se
+              conserva.
+            </p>
+            <label class="check"
+              ><input
+                type="checkbox"
+                [checked]="confirmed()"
+                (change)="confirmed.set($any($event.target).checked)"
+              />
+              Soy autor o tengo permiso para distribuir este addon, sus archivos e imágenes, y
+              quiero publicarlo.</label
+            >
+            <div class="publish-actions">
+              <button class="button" type="submit">Publicar addon ↗</button
+              ><button class="button secondary" type="button" (click)="finish(false)">
+                Guardar borrador
+              </button>
+            </div>
+          </section>
+        </fieldset>
+      </form>
+      <details class="advanced">
+        <summary>Herramientas avanzadas</summary>
+        <p>
+          <a [routerLink]="['/administracion/addons', id, 'archivos']"
+            >Gestionar versiones y archivos</a
+          >
+        </p>
+        <p>
+          <a [routerLink]="['/administracion/addons', id, 'publicacion']"
+            >Revisión detallada e historial</a
+          >
+        </p>
+      </details>
+    }
+  }
+</section>

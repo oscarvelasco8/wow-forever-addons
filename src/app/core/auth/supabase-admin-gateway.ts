@@ -7,6 +7,7 @@ import type { DraftFields, ReleaseFields } from '../catalog/admin-drafts';
 import type { EditorialCommand } from '../catalog/admin-editorial';
 import type { CategoryInput } from '../catalog/admin-categories';
 import { createAuthStorage, preservePkceOnFailure, RecoveryRateLimitError, RecoveryBrowserError } from './auth-storage';
+import {announceCatalogChange} from '../catalog/catalog-updates';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseAdminGateway implements AdminAuthGateway {
@@ -61,6 +62,8 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
   }
 
   async signIn(email: string, password: string): Promise<AccessDecision> {
+    const expiry=Number(localStorage.getItem('wfa-admin-auth-expires-at'));
+    if(expiry&&expiry<=Date.now()){localStorage.removeItem('wfa-admin-auth');localStorage.removeItem('wfa-admin-auth-user');localStorage.removeItem('wfa-admin-auth-expires-at');sessionStorage.removeItem('wfa-admin-auth');}
     const client = await this.client();
     const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) { throw new Error('Sign-in failed.'); }
@@ -125,6 +128,9 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
     } finally {
       // Do not leave credentials in this tab if revocation fails offline.
       sessionStorage.removeItem('wfa-admin-auth');
+      localStorage.removeItem('wfa-admin-auth');
+      localStorage.removeItem('wfa-admin-auth-user');
+      localStorage.removeItem('wfa-admin-auth-expires-at');
       sessionStorage.removeItem('wfa-admin-auth-code-verifier');
       client.auth.stopAutoRefresh();
       this.clientPromise = undefined;
@@ -187,14 +193,17 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
   async listDrafts() { const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).listDrafts(client); }
   async listEditorial() { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).listEditorial(client); }
   async loadCategories() { const client=await this.draftClient();return (await import('../catalog/admin-categories')).loadCategories(client); }
-  async saveCategory(input:CategoryInput,note:string) { const client=await this.draftClient();return (await import('../catalog/admin-categories')).saveCategory(client,input,note); }
+  async saveCategory(input:CategoryInput,note:string) { const client=await this.draftClient();try{return await (await import('../catalog/admin-categories')).saveCategory(client,input,note);}finally{announceCatalogChange();} }
   async loadAssetBundle(id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-assets')).loadAssetBundle(client,id); }
   async loadEditorial(id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).loadEditorial(client,id); }
-  async editorialAction(command: EditorialCommand) { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).editorialAction(client,command); }
+  async editorialAction(command: EditorialCommand) { const client = await this.draftClient();try{return await (await import('../catalog/admin-editorial')).editorialAction(client,command);}finally{announceCatalogChange();} }
   async editorialImageBlob(addonId: string,id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-editorial')).editorialImageBlob(client,addonId,id); }
   async loadDraft(id: string) { const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).loadDraft(client, id); }
   async createDraft(id: string, input: DraftFields) {
     const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).createDraft(client, id, input);
+  }
+  async publishPreparedAddon(id:string,release:string,expected:string,images:boolean,permission:boolean){
+    const client=await this.draftClient();return(await import('../catalog/guided-publication')).publishPreparedAddon(client,id,release,expected,images,permission);
   }
   async saveDraft(id: string, updatedAt: string, input: DraftFields) {
     const client = await this.draftClient(); return (await import('../catalog/admin-drafts')).saveDraft(client, id, updatedAt, input);

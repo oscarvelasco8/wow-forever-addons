@@ -1,9 +1,9 @@
 <section class="container section editor">
  <a routerLink="/administracion">← Volver a gestión</a>
- <header><p class="eyebrow">Catálogo · Administración</p><h1>Nuevo addon.</h1><p>Crea una ficha privada. Después podrás completar sus textos, imágenes y versiones.</p></header>
- <div class="draft-note"><strong>Se guardará como borrador</strong><span>No aparecerá en el catálogo ni tendrá archivos públicos. La aprobación y la publicación son pasos independientes.</span></div>
+ <header><p class="eyebrow">Nuevo addon · Paso 1 de 2</p><h1>Presenta tu addon.</h1><p>Completa su ficha. En el siguiente paso añadirás el ZIP y podrás publicarlo desde la misma pantalla.</p></header>
+ <div class="draft-note"><strong>Primero, una ficha privada</strong><span>Se conservará como borrador hasta que confirmes «Publicar addon» en el siguiente paso.</span></div>
  @if(error()){<p class="message error" role="alert">{{error()}}</p>}
- @if(created()){<p role="status">Borrador creado. <a [routerLink]="['/administracion/addons',created()]">Abrir editor ↗</a></p>}
+ @if(created()){<p role="status">Borrador creado. <a [routerLink]="['/administracion/addons',created(),'preparar']">Continuar con el ZIP ↗</a></p>}
  @if(loading()){<p role="status">Cargando categorías…</p>}
  @else if(!categories().length){<p>No hay categorías disponibles. <a routerLink="/administracion/categorias">Gestionar categorías</a></p><button class="button secondary" (click)="load()">Volver a cargar</button>}
  @else {
@@ -15,7 +15,6 @@
  <label>Categoría *<select formControlName="category_id"><option value="">Selecciona una categoría</option>@for(category of categories();track category.id){<option [value]="category.id">{{category.name}}{{category.is_visible?'':' (oculta)'}}</option>}</select></label>
  <label>Autoría *<input formControlName="author_name" maxlength="150"></label>
  <label class="wide">Resumen *<textarea formControlName="summary" maxlength="300" rows="3"></textarea><small>{{form.controls.summary.value.length}}/300 caracteres</small></label>
- <label class="wide">Licencia o estado de revisión *<input formControlName="license_name" maxlength="150"><small>Indicar una licencia no aprueba la distribución.</small></label>
- </div><button class="button" type="submit">{{saving()?'Creando…':'Crear borrador y continuar'}}</button></fieldset>
+ </div><button class="button" type="submit">{{saving()?'Guardando…':'Continuar con el ZIP'}}</button></fieldset>
  </form>}
 </section>

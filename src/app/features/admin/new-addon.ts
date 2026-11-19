@@ -28,7 +28,7 @@ export class NewAddon {
   try{
    const addon=await this.gateway.createDraft(this.attemptId,{...this.form.getRawValue(),description:'',credits:'',installation_instructions:''});
    this.created.set(addon.id);this.form.markAsPristine();this.saving.set(false);
-   await this.router.navigate(['/administracion/addons',addon.id]);
+   await this.router.navigate(['/administracion/addons',addon.id,'preparar']);
   }catch(error){
    if(this.created()){this.error.set('El borrador está creado. Abre el editor con el enlace inferior.');}
    else if(error instanceof DraftCreationUncertainError){this.uncertain.set(true);this.error.set('No se ha podido confirmar la creación. Vuelve al listado y comprueba si aparece antes de crear otro addon.');}

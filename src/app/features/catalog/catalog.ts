@@ -52,7 +52,7 @@ export class Catalog {
       this.validation.set(query.length > 160 ? 'La búsqueda admite hasta 160 caracteres.' : '');
       if (query.length <= 160) {
         timer = setTimeout(() => {
-          void this.catalog.ensure(query, category);
+          void this.catalog.load(query, category);
         }, 300);
       }
     });

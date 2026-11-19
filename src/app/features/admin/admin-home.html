@@ -6,7 +6,7 @@
     @else if (loadError()) { <p class="error" role="alert">{{ loadError() }}</p> }
     @else {
       <div class="draft-grid">@for (draft of drafts(); track draft.id) {
-        <article><div class="addon-copy"><span class="eyebrow">{{draft.status === 'published' ? 'Publicado' : draft.status === 'archived' ? 'Retirado' : 'Borrador · Sin publicar'}}</span><h3>{{ draft.name }}</h3><p>{{ draft.summary }}</p><p class="muted">{{ draft.distribution_approved ? 'Revisión de distribución registrada' : 'Distribución pendiente de revisión' }}</p></div><div class="addon-actions">@if(draft.status==='draft'){<a class="button secondary" [routerLink]="['/administracion/addons', draft.id]">Editar borrador ↗</a>}<a class="button secondary" [routerLink]="['/administracion/addons',draft.id,'publicacion']">Revisión y publicación ↗</a></div></article>
+        <article><div class="addon-copy"><span class="eyebrow">{{draft.status === 'published' ? 'Publicado' : draft.status === 'archived' ? 'Retirado' : 'Borrador · Sin publicar'}}</span><h3>{{ draft.name }}</h3><p>{{ draft.summary }}</p><p class="muted">{{ draft.distribution_approved ? 'Permiso de distribución confirmado' : 'Permiso pendiente de confirmar al publicar' }}</p></div><div class="addon-actions">@if(draft.status==='draft'){<a class="button" [routerLink]="['/administracion/addons', draft.id,'preparar']">Preparar y publicar ↗</a>}<a class="button secondary" [routerLink]="['/administracion/addons', draft.id]">Editar ficha ↗</a><a class="button secondary" [routerLink]="['/administracion/addons',draft.id,'publicacion']">{{draft.status==='published'?'Gestionar publicación':'Historial y opciones'}} ↗</a></div></article>
       } @empty { <p>No hay addons en la colección.</p> }</div>
     }
   </section>

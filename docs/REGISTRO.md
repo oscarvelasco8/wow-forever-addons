@@ -1,5 +1,43 @@
 # Registro de trabajo
 
+## Tres mejoras administrativas — implementación y QA en curso19/11
+
+- Propietario autoriza hacer las tres mejoras mientras está fuera, y precisa simplificar todo el recorrido desde creación hasta publicación. Ya no se dejan para más adelante. No cambiar contenido de Rumbo ni publicar pruebas en su nombre.
+- Sesión: almacenamiento compartido del navegador con límite absoluto7d, migración de sesión antigua de pestaña y limpieza en cierre. Login intenta recuperar sesión antes de pedir contraseña. Autorización sigue getUser+admin_access y RLS/MFA; no se eliminan factores ni se amplían privilegios. PKCE conserva plazo1h separado. No se registran valores.
+- Catálogo: invalidación tras acciones editoriales/categorías, aviso local y otras pestañas sin datos del addon, recarga al navegar, al volver/foco y revisión30s mientras visible. Refresco mantiene filtros y páginas cargadas, sin vaciar cada30s; errores no conservan contenido obsoleto. Fichas también refrescan estado publicado. No prometer instantaneidad remota: hasta30s para otro navegador sin aviso.
+- Publicación simplificada: dos pantallas, ficha básica y ZIP/publicar. No exige elegir licencia; confirmación explícita de autoría/permiso, registro de distribución autorizada si estaba pendiente, conserva licencia existente. No implica dominio público ni licencia abierta. Lee metadatos de un .toc acotado64KiB para evitar pedir versión/interfaz si son legibles. Campo cliente por defecto WoW Forever y detalles ajustables.
+- Publicar coordina RPC existentes con MFA y RLS: permiso, versión, imágenes opcionales, padre al final. Si un paso falla, padre continúa privado y el formulario bloquea reintento hasta recargar estado; no transacción única ni reenvío automático. Guardar borrador alternativo. Sin migraciones o credenciales nuevas.
+- Check completo PASS20 API/24 SQL/97 Angular/1 SSR/2 empaquetado. Nuevas pruebas sesión/expiración/migración/restauración, invalidación/refresco con filtros, permiso y categoría, publicación padre última/no publicación tras fallo, metadatos ZIP, doble clic y bloqueo ante respuesta incierta. Mock relativo inicial rechazado por Angular se sustituyó por transporte real SDK; mock load de catálogo actualizado. Errores iniciales template/fixture corregidos. Build visual aislado aprobado. Falta inspección visual y prueba alojada tras despliegue antes de declarar entregado.
+
+
+## Incidencias de sesión y actualización del catálogo — 19/11
+
+- Propietario pide anotar para corregir más adelante: (1) cada vez que quiere entrar en administración debe iniciar sesión de nuevo; revisar persistencia/restauración de sesión y navegación, distinguir contraseña y MFA y no reducir permisos/MFA sin analizar causa. No diagnosticado todavía.
+- (2) Después de «borrarle» el addon seguía apareciendo hasta recargar la página. Revisar invalidación/refresco del estado tras retirada/eliminación y al volver al catálogo. La interfaz debe reflejar el resultado sin recarga manual; verificar también descarga tras retirada. No se infiere DELETE físico ni se da por comprobada denegación HTTP por esta observación.
+- Ambas incidencias se suman a simplificar muchísimo creación/publicación de addons, pendiente solicitado previamente. Registro de observaciones del propietario, no arreglos implementados ni nuevas pruebas del agente. Recuperación de contraseña continúa pendiente.
+
+
+## Publicación y descarga confirmadas; simplificar flujo — 19/11
+
+- Propietario confirma que publicó el addon de prueba y descargó el ZIP desde la web alojada. Confirmación manual del usuario; no se afirma nueva comprobación binaria del archivo descargado por el agente. Cierra la comprobación manual de creación, subida, publicación y descarga de este contenido ficticio. No implica publicación de Rumbo ni compatibilidad en juego.
+- Petición explícita para más adelante: simplificar muchísimo el proceso de publicación de un addon nuevo. Prioridad de usabilidad: recorrido guiado y compacto, con requisitos claros de licencia, motivo mínimo, versión y archivos; evitar saltos entre pantallas y descubrir bloqueos después de confirmar. Conservar borrador privado, validación administrativa/MFA y aprobación explícita antes de hacer público el contenido, sin obligar al usuario a gestionar innecesariamente los pasos internos.
+- No implementar este rediseño todavía: queda pendiente por indicación del propietario. Mantenerlo como siguiente mejora de administración al retomar usabilidad. Contenido test puede seguir publicado; no retirado ni eliminado por agente. Stripe desactivado y recuperación de contraseña pendiente.
+
+
+## Subida real del ZIP de prueba verificada — 19/11
+
+- Propietario añadió ZIP y solicita revisión. Inspección visual de Chrome conectado en revisión editorial del addon test confirma ficha y versión en borrador, distribución pendiente. Versión1, cliente1, interfaz1 (datos del propietario); ZIP asociado631 bytes y SHA256 coincide exactamente con archivo de prueba generado. No afirmar compatibilidad en juego ni descarga íntegra desde Storage, que aún no se ha realizado en esta revisión.
+- Imagen adicional presente y oculta con texto alternativo test. Historial muestra creación de ficha/versión/imagen y edición de versión. Agente no publica ni cambia filas/archivos. Botón publicar versión deshabilitado mientras distribución pendiente.
+- GET público /api/catalog200 no contiene ID del addon de prueba. Captura real con sesión administrativa fase7-zip-prueba-asociado-vercel-real.jpg; no fixture. Siguiente paso, si propietario desea: prueba controlada de publicación y descarga y posterior retirada del contenido ficticio. Sin aprobación/publicación automática, Stripe desactivado.
+
+
+## Panel reorganizado: revisión real completada — 19/11
+
+- Propietario completó MFA manual en Chrome; agente observó /administracion real desplegado, con Rumbo borrador. Verificada composición de ba14d4a: título antes de acciones, Nuevo addon/categorías juntos, actualizar alineado y acciones de tarjeta a la derecha. No fixture, no simulación de sesión. Captura fase7-panel-organizado-vercel-real.jpg.
+- Agente abrió enlace Nuevo addon sin escribir ni guardar: /administracion/addons/nuevo carga con sesión, formulario completo visible, categorías cargadas (selector), licencia pendiente y botón crear al pie. Capturas fase7-nuevo-addon-vercel-real.jpg y fase7-nuevo-addon-formulario-vercel-real.jpg; campos vacíos, ningún dato privado o código. Creación real INSERT aún pendiente del propietario. Browser queda en formulario vacío.
+- Revisión visual efectuada en escritorio; no afirmar prueba móvil o flujos de creación/publicación completados. Se preservan preview etiquetado y capturas anteriores. Build producción aprobado, smoke alojado18/18 PASS en sesión anterior. No nuevas escrituras remotas, Auth, Storage o cambios de lógica en esta revisión. Regla de comprobar interfaz antes de entregar permanece en AGENTS.md.
+
+
 ## Organización del panel — revisión visual19/11
 
 - Propietario señala desorden en entrega anterior y exige comprobar interfaz en web abierta antes de entregar. Guardado explícitamente en AGENTS.md: no sustituir revisión visual por build/HTTP ni afirmar comprobación sin acceso.
@@ -480,3 +518,11 @@ Captura fase9-404-vercel-real.jpg comprobada visualmente en Chrome: página púb
 Captura nueva no obtenida: Chrome se abrió en selector de perfiles; intento de abrir invitado devolvió coordinate input geometry is unavailable. No se automatizó login ni perfil personal. Vista aislada compilada disponible en loopback4201; capturas anteriores preservadas. Se entrega funcionalidad para comprobar con sesión del propietario.
 
 Despliegue d8c9357 comprobado: ruta nueva200 con no-store/noindex y ruta presente en bundle alojado (nombre de componente minificado no localizado por búsqueda literal). Smoke público18/18 PASS. Creación real con sesión administrativa queda pendiente de que propietario use Nuevo addon; no afirmar INSERT real probado.
+
+19/11: propietario confirma creación real de nuevo borrador y apertura correcta del editor. Preparado a petición ZIP de prueba en Downloads/WFA-Prueba-0.0.1.zip (631 bytes), fuera del repositorio; contiene WFA_Prueba/WFA_Prueba.toc y LEEME.txt, sin Lua ni código ejecutable. Validado con inspectZip real de la web y lectura íntegra fflate:2 entradas, estructura aceptada. Interface16001 y versión0.0.1 son datos de prueba, no compatibilidad certificada. No se subió a Storage ni se publicó; usuario realizará subida en borrador. No es un addon funcional ni modifica addon-rumbo.
+
+QA final en curso: captura/activación de Chrome falla con «failed to activate captured window». Tras refrescar lista y seleccionar de nuevo, lectura AX disponible pero segunda acción vuelve a fallar; se detiene control Windows conforme a habilidad. No es una revisión visual aprobada y no se han hecho más acciones sobre esa ventana. No capturas nuevas ni publicación de contenido real. Se conserva rama de trabajo para revisión cuando propietario regrese; no sustituir producción por interfaz sin inspeccionar.
+
+Añadidos además marcador de migración de sesión para impedir que una pestaña antigua restaure credenciales después del logout; caducidad absoluta no se amplía con refresh; pageshow para volver desde historial; límite ZIP antes de leer bytes y reseteo de selectores tras guardar/recargar. Documentación Supabase getSession/getUser/changelog consultada: autorización remota permanece; sin cambios SQL ni Auth remoto. Siguiente paso bloqueado por entorno: recuperar control de Chrome, inspeccionar dos pantallas en escritorio/móvil y probar vuelta a administración con sesión del propietario. La publicación nueva se prueba sin tocar Rumbo ni contenido real existente.
+
+Cierre técnico de preparación19/11: npm run check PASS20 API/24 SQL/98 Angular/1 SSR/2 empaquetado; build final tras añadir opción nueva versión PASS, check:release14/14 y diff --check correctos. Inicial322,69kB/89,47kB estimado. Rama codex/usabilidad-administracion creada para conservar tres mejoras sin sustituir main/producción antes de revisión visual requerida. No se anuncia entrega visual completada ni despliegue productivo. Se guardan capturas reales anteriores (panel y ZIP) como evidencia histórica, no como capturas del flujo nuevo. Chrome no se puede activar; no se han inventado capturas. Próximo al regreso: inspeccionar flujo y sesión en navegador real, probar publicación controlada/retirada y merge solo tras corregir lo que revele revisión. Recuperación de contraseña separada pendiente.

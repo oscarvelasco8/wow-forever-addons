@@ -2,6 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { PublicCatalog } from './public-catalog';
 const page=(addons:unknown[]=[],nextCursor:string|null=null)=>Response.json({addons,categories:[],nextCursor});
 describe('Paged catalog source',()=>{
+  it('refreshes loaded pages without losing filters and removes withdrawn items without a reload',async()=>{
+    const request=vi.fn().mockResolvedValueOnce(page([{slug:'withdrawn'}],'more')).mockResolvedValueOnce(page([{slug:'remaining'}])).mockResolvedValueOnce(page([{slug:'remaining'}]));vi.stubGlobal('fetch',request);
+    const catalog=TestBed.inject(PublicCatalog);await catalog.load('route','navigation');await catalog.loadMore();expect(catalog.addons()).toHaveLength(2);
+    await catalog.refresh();expect(catalog.addons().map(a=>a.slug)).toEqual(['remaining']);expect(request.mock.calls[2][0]).toBe('/api/catalog?q=route&category=navigation');
+  });
   afterEach(()=>vi.unstubAllGlobals());
   it('distinguishes empty data from errors and retries anonymously',async()=>{
     const request=vi.fn().mockResolvedValue(page());vi.stubGlobal('fetch',request);const catalog=TestBed.inject(PublicCatalog);

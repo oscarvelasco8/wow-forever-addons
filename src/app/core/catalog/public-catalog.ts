@@ -1,4 +1,5 @@
-import { Injectable, afterNextRender, signal } from '@angular/core';
+import { Injectable, afterNextRender, signal, inject, DestroyRef } from '@angular/core';
+import {watchCatalogChanges} from './catalog-updates';
 import type { PublicAddon } from './public-catalog.types';
 export interface PublicCategory {
   slug: string;
@@ -23,9 +24,35 @@ export class PublicCatalog {
   private generation = 0;
   private controller?: AbortController;
   constructor() {
+    const destroy=inject(DestroyRef);
     afterNextRender(() => {
       void this.ensure();
+      const visiblePath=()=>document.visibilityState!=='hidden'&&['/','/catalogo'].includes(location.pathname);
+      const refresh=()=>{this.controller?.abort();this.generation++;this.controller=undefined;this.addons.set([]);this.nextCursor.set(null);this.state.set('loading');if(visiblePath())void this.load();};
+      const visible=()=>{if(visiblePath())void this.refresh();};
+      const stop=watchCatalogChanges(refresh);
+      window.addEventListener('focus',visible);document.addEventListener('visibilitychange',visible);
+      window.addEventListener('pageshow',visible);
+      const timer=setInterval(visible,30000);
+      destroy.onDestroy(()=>{stop();clearInterval(timer);window.removeEventListener('focus',visible);window.removeEventListener('pageshow',visible);document.removeEventListener('visibilitychange',visible);});
     });
+  }
+  async refresh():Promise<void>{
+    if(this.controller)return;
+    if(this.state()!=='ready'){await this.load();return;}
+    const controller=new AbortController(),generation=++this.generation,target=this.addons().length;
+    this.controller=controller;let cursor:string|undefined;const addons:PublicAddon[]=[],seen=new Set<string>();
+    try{
+      let result:Page;
+      do{
+        result=await this.page(this.query,this.category,cursor,controller.signal);
+        if(generation!==this.generation)return;
+        addons.push(...result.addons);cursor=result.nextCursor??undefined;
+        if(cursor&&seen.has(cursor))throw new Error('Repeated cursor');if(cursor)seen.add(cursor);
+      }while(cursor&&addons.length<target);
+      this.addons.set(addons);this.categories.set(result.categories);this.nextCursor.set(cursor??null);
+    }catch{if(generation===this.generation){this.addons.set([]);this.nextCursor.set(null);this.state.set('error');}}
+    finally{if(generation===this.generation)this.controller=undefined;}
   }
   async ensure(query = '', category = ''): Promise<void> {
     if (

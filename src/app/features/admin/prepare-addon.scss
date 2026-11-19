@@ -1,0 +1,42 @@
+.prepare header h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+}
+.prepare .panel h2 {
+  font-size: 1.65rem;
+}
+.prepare .panel p {
+  color: var(--muted);
+}
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-block: 20px;
+  line-height: 1.65;
+  font-size: 0.85rem;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-top: 4px;
+}
+.publish-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.prepare details {
+  margin-top: 20px;
+}
+.prepare summary {
+  color: var(--gold);
+  cursor: pointer;
+}
+.final-step {
+  border-color: var(--gold);
+}
+.advanced {
+  padding-block: 20px;
+  border-top: 1px solid var(--border);
+}
