@@ -1,5 +1,9 @@
 # Preparación para publicación
 
+## Estado vigente20/11
+
+Web desplegada y comprobada en Vercel;14 migraciones Supabase aplicadas. Propietario confirma recorrido completo de addons y recuperación de contraseña con cambio correcto. Sandbox Stripe conectado en Production con autorización, secretos backend y webhook HTTPS propio; Preview desactivado. No habilitado modo live. Prueba técnica alojada de caducidad/recibo/duplicado aprobada y prueba manual5€ pendiente. Los apartados inferiores conservan la lista histórica de preparación; ya no describen ausencia de destino Vercel o recuperación sin comprobar. Permanecen dominio canónico, operación/restauración y preparación independiente de aportaciones reales.
+
 Estado 19/11/2026: aplicación y Stripe comprobados localmente en pruebas. No hay publicación ni cobros reales. Aportaciones voluntarias sin compra, funciones exclusivas o ventajas. No se construye un flujo de solicitud de reembolsos; su conciliación y las disputas quedan fuera de esta fase por decisión del propietario.
 
 ## Paquete que se debe revisar

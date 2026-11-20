@@ -1,5 +1,11 @@
 # Aportaciones voluntarias — preparación local
 
+## Estado vigente20/11: sandbox alojado
+
+Vercel Production ya sirve Checkout de pruebas y recibe los cuatro eventos Checkout por un webhook HTTPS independiente del listener local. Secretos backend limitados a Production; Preview desactivado. Solo se admiten sesiones test, sin cobros reales. Primera prueba técnica alojada sin pago: caducidad entregada automáticamente y registrada, recibo HTTP200 expired, repetición HTTP200 duplicate, petición sin firma400. Ledger mantiene3 pagos simulados previos/1300 céntimos. Pago manual alojado5€ solicitado al propietario, pendiente de corroboración.
+
+Comprobación pública: `node scripts/verify-hosted.mjs https://wow-forever-addons.vercel.app/ --sandbox` (18/18). Sin flag exige Checkout desactivado. Captura real `fase6-sandbox-vercel-real.jpg`. Los bloques siguientes son históricos; no repetir creación de webhook ni copiar secretos locales de listener.
+
 ## Retorno confirmado y recuperación local — vigente 19/11
 
 - Propietario confirma nueva prueba independiente de 3 €: «Aportación de prueba confirmada» e importe correcto. Backend remoto conserva tres pagos simulados (1.300 céntimos EUR); siete sesiones técnicas caducadas, diez sesiones/eventos. Sin dinero real ni despliegue.

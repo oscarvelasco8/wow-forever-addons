@@ -606,3 +606,19 @@ Autor o equipo deja de ser obligatorio al crear y editar borradores. Si se deja 
 npm.cmd run check PASS20 API/25 SQL/106 Angular/1 SSR/2 empaquetado y check:release14/14; prueba existente de creación ahora omite autor y comprueba valor predeterminado. Revisión visual del formulario en navegador, fixture sin Supabase, captura fase7-autor-opcional-preview.jpg; no creación remota por agente. Auxiliar4201 detenido.
 
 Cierre autoría20/11: push main1e2e47a verificado, Vercel success; node scripts/verify-hosted.mjs https://wow-forever-addons.vercel.app/ PASS18/18 después del despliegue. No alteración de contenido existente. Captura preservada y auxiliar detenido.
+
+## 20/11 — Confirmación del propietario y Stripe alojado
+
+El propietario confirma que el recorrido completo de addons (punto1) está probado y que acaba de cambiar correctamente la contraseña mediante recuperación (punto2). Registrar como aceptación manual del propietario; no repetir correos ni declarar observación autónoma del agente. Se retoma punto3: sandbox Stripe alojado.
+
+Estado inicial verificado: /api/support-checkout devuelve enabled=false/mode=test; Vercel contiene cuatro variables (dos públicas y dos flags), sin secretos Stripe/backend. Dashboard abierto en sandbox Desarrollo; listado de destinos vacío. Credenciales locales presentes con formato correcto, sin imprimir valores. Falta destino HTTPS con cuatro eventos Checkout, secreto independiente del listener local, secretos backend por ámbito y despliegue. Solicitada confirmación concreta para transferencia de credenciales a Vercel y nuevo destino antes de ejecutarlos. No modo live ni dinero real.
+
+## 20/11 — Sandbox alojado autorizado y conectado
+
+Propietario autoriza transferencia a Vercel Production y creación de destino. Creado un único webhook HTTPS /api/support-webhook en sandbox Desarrollo, snapshot API2026-11-18.endive, solo completed/expired/async_payment_succeeded/async_payment_failed de Checkout. Se guardan5 variables backend como Secret Production (incluye secreto independiente de webhook y recibos aleatorio nuevo). Flags Production true; Preview conserva false, webhook false en preproducción. No configuración live. Archivo temporal de importación eliminado tras guardar; .env local no cambiado. La importación propuso Config por defecto; se corrigió a Secret/Production antes de guardar. No capturas con valores.
+
+Vercel solicitó verificación de identidad; propietario la completó personalmente. Despliegue 3yeKw8YDWf7dV4VUQfNePeccMPZP Ready con fuente c70dcb9. API real enabled=true/mode=test. Creación técnica3€ por HTTPS200 sin pago; sesión caducada mediante Stripe sandbox. Evento entregado automáticamente, pending_webhooks0, consulta de recibo HTTP200 expired y reenvío firmado HTTP200 duplicate. Solicitud sin firma400. Ledger previo paid3/1300 céntimos, expired7; posterior paid3/1300, expired8. Ningún pago nuevo por agente. Smoke18/18 con --sandbox. Script verify-hosted admite flag explícito --sandbox; por defecto sigue exigiendo desactivado.
+
+Revisada visualmente página real /apoyar con aviso Modo de pruebas y botón5€. Captura fase6-sandbox-vercel-real.jpg; variables sin valores fase6-vercel-sandbox-variables.jpg; verificación Vercel capturada antes del código. Prueba manual de pago5€ solicitada al propietario en misma pestaña; falta su resultado y corroborar ledger/entrega. No se declara fase6 cerrada ni donaciones reales habilitadas.
+
+Controles negativos alojados adicionales: origen ajeno403, importe inválido400, recibo manipulado403. La primera expectativa de la sonda para recibo fue400; se corrigió a403 tras comprobar contrato explícito InvalidReceipt, sin cambio de código. No se agotaron cuotas ni se crearon sesiones en estas solicitudes rechazadas.
