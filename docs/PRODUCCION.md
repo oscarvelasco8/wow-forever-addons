@@ -1,5 +1,19 @@
 # Preparación para publicación
 
+## Preparación live20/11 — cuenta sin activar
+
+Propietario confirma que solo ha utilizado sandbox. Inspección de cuenta real: Activar Payments, verificación del titular/actividad, banco, seguridad y revisión sin iniciar. Se entrega pantalla al titular; el agente no introduce información financiera, acepta contratos ni envía activación. No se han obtenido claves live ni cambiado la configuración alojada.
+
+La implementación actual NO admite dinero real: clave, prefijo de sesión, metadatos, recibo, ledger, cuota e interfaz están vinculados al sandbox. La preparación técnica siguiente debe cubrir todo el recorrido, manteniendo pruebas operativas:
+
+1. Configuración real independiente y desactivada por defecto; claves restringidas de servidor cuando sus permisos cubran la integración, origen HTTPS fijo y comprobación de cuenta habilitada. Nunca reutilizar secretos del sandbox o mezclar modos por inferencia del cliente.
+2. Ledger y cuota reales separados de `private.support_test_*`, RPC solo backend, RLS y pruebas de idempotencia/precedencia; no convertir registros ficticios en aportaciones reales.
+3. Destino de webhook live propio con validación de livemode y metadatos reales, mismo tratamiento del cuerpo firmado y persistencia antes de HTTP200. Recibos ligados al modo, firma independiente y lectura del ledger correcto.
+4. Frontend con información real de aportación voluntaria, importes y confirmación basada en webhook; conservar experiencia test identificada. No desbloqueos por pago.
+5. Validación local con transportes controlados, revisión visual y configuración backend Production por separado. Después de activación del titular, comprobar disponibilidad y webhook reales sin cobrar automáticamente; cualquier primera aportación real la realiza el propietario voluntariamente.
+
+Esta lista es diseño de implementación, NO soporte live ya implementado. Próximo requisito externo: titular completa la activación en Stripe y confirma si Payments está habilitado o en revisión. No pedir claves, documentos, datos bancarios o códigos por chat. Documentación oficial revisada: [activación](https://docs.stripe.com/get-started/account/set-up), [claves y separación de entornos](https://docs.stripe.com/keys).
+
 ## Estado vigente20/11
 
 Web desplegada y comprobada en Vercel;14 migraciones Supabase aplicadas. Propietario confirma recorrido completo de addons y recuperación de contraseña con cambio correcto. Sandbox Stripe conectado en Production con autorización, secretos backend y webhook HTTPS propio; Preview desactivado. No habilitado modo live. Prueba técnica alojada de caducidad/recibo/duplicado aprobada y prueba manual5€ pendiente. Los apartados inferiores conservan la lista histórica de preparación; ya no describen ausencia de destino Vercel o recuperación sin comprobar. Permanecen dominio canónico, operación/restauración y preparación independiente de aportaciones reales.
