@@ -1,5 +1,13 @@
 # Memoria de continuidad
 
+## Cierre validación sandbox alojado — 20/11
+
+- Aprobados pago normal5€, desafío3DS3€, rechazo3€, cancelación desde Checkout, caducidad, controles negativos y recuperación de webhook. Todo test; modo live sigue desactivado y código rechaza claves live.
+- Cancelación real desde el Checkout rechazado vuelve con aviso sin completar; no se afirma que volver cierre o caduque la sesión Stripe. Captura `fase6-cancelacion-checkout-vercel-real.jpg`.
+- Ensayo controlado: un único destino sandbox desviado temporalmente a /api/health del mismo proyecto (POST405), sesión técnica3€ sin pagar caducada, recibo pending y webhook pendiente. Restauración garantizada en finally. Stripe reintentó automáticamente18s después: HTTP200 recorded. Dos reenvíos CLI posteriores200 duplicate. No se simuló caída de Supabase ni se prueba el calendario de reintentos live.
+- Verificación final: destino original /api/support-webhook activo, cuatro eventos, livemodefalse, único destino y cero entregas pendientes. Ledger14 sesiones/14 eventos: paid5/2100 céntimos ficticios, expired9. Ningún pago nuevo durante ensayo. Smoke público18/18 con --sandbox. Captura real `fase6-webhook-reintento-automatico-real.jpg`.
+- Credenciales/local .env sin cambios; temporal de recibo eliminado. No cambios de procesamiento ni nuevas migraciones. Próximo: preparar separadamente modo real y requisitos operativos, o continuar dominio/SEO; no introducir claves live en implementación test actual.
+
 ## Estado vigente20/11 — Stripe alojado
 
 - Propietario confirma recorrido completo de addons y recuperación con contraseña cambiada. Ambos aceptados manualmente; no repetir recuperación.
