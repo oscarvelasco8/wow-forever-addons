@@ -101,3 +101,5 @@ Referencias oficiales consultadas: [Checkout Sessions](https://docs.stripe.com/a
 Decisión vigente19/11: no añadir flujo de solicitud de reembolsos; conciliación de devoluciones/disputas fuera de esta fase. Continuar preparación técnica en docs/PRODUCCION.md, manteniendo solo sandbox.
 
 Confirmación posterior20/11: pago alojado5€ aprobado de extremo a extremo (usuario, pantalla real, Stripe y ledger); paid4/1800 céntimos ficticios,8 expiradas. Captura fase6-pago5-confirmado-vercel-real.jpg. Falta completar3DS y rechazo alojados para cerrar aceptación sandbox; no activar live.
+
+Actualización20/11: pago normal5€,3DS3€ (challenge2.1.0 authenticated) y rechazo3€ (card_declined/generic_decline; open/unpaid) corroborados en Stripe/ledger y navegador. Total histórico sandbox paid5/2100 céntimos, expired8. Rechazo sin incremento. Pruebas principales alojadas aprobadas; falta observar cancelación manual y ensayo de reentrega cloud ante fallo para aceptación ampliada. No modo real ni cobros. Captura fase6-rechazo-checkout-alojado-real.jpg.
