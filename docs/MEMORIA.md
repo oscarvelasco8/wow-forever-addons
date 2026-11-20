@@ -1,5 +1,13 @@
 # Memoria de continuidad
 
+## Estado vigente20/11 — Stripe alojado
+
+- Propietario confirma recorrido completo de addons y recuperación con contraseña cambiada. Ambos aceptados manualmente; no repetir recuperación.
+- Sandbox Stripe activo en Vercel Production, secretos solo backend/Production, Preview desactivado. Webhook propio de cuatro eventos Checkout. Sin modo live.
+- Pago alojado5€ confirmado por propietario, observado en navegador y corroborado: Stripe paid/livemodefalse/pending_webhooks0; Supabase una sesión nueva500EUR y un evento. Totales históricos sandbox: paid4/1800 céntimos, expired8. Captura real `fase6-pago5-confirmado-vercel-real.jpg`.
+- Caducidad técnica alojada, duplicado, firma ausente, origen ajeno, importe inválido y recibo manipulado comprobados. Smoke18/18 con --sandbox. No nuevo código de pagos, solo configuración y flag explícito de smoke.
+- Siguiente: usuario tiene solicitada prueba alojada3€ con tarjeta3DS ficticia3220. Después rechazo0002 sin completar con válida, corroborar que no aumenta paid. No declarar cerrada aceptación completa ni activar aportaciones reales todavía.
+
 ## Acciones rápidas — 20/11
 
 - Implementadas en cada tarjeta: Eliminar addon (también borradores), Despublicar para publicados y accesos a archivos/versiones e historial. Borrado exige escribir el nombre exacto; despublicar mantiene archivos. Listado y catálogo se actualizan después de la operación.
