@@ -22,22 +22,10 @@
     <p class="eyebrow">Aportación puntual · Sin suscripción</p>
     <h2 id="checkout-title">Un apoyo que tú eliges.</h2>
     <p>Todos los addons y sus actualizaciones seguirán siendo gratuitos. Aportar no concede acceso ni ventajas.</p>
-    @if (availability() === 'test') {
-      <p class="notice"><strong>Modo de pruebas · No se mueve dinero.</strong><span>Checkout de Stripe se abrirá para una prueba. Utiliza únicamente datos de prueba; nunca una tarjeta real.</span></p>
-      <fieldset [disabled]="busy() || cooldownSeconds() > 0"><legend>Importe de ejemplo</legend><div class="amounts">
-        @for (option of amounts; track option) {
-          <button type="button" class="button secondary" [attr.aria-pressed]="amount() === option" (click)="selectAmount(option)">{{ option / 100 }} €</button>
-        }
-      </div></fieldset>
-      <button type="button" class="button checkout-submit" [disabled]="busy() || cooldownSeconds() > 0" (click)="startCheckout()">{{ busy() ? 'Abriendo Checkout…' : cooldownSeconds() > 0 ? 'Espera ' + cooldownSeconds() + ' s' : 'Probar con ' + amount() / 100 + ' € en Stripe ↗' }}</button>
-      <p class="checkout-note">El formulario de tarjeta estará alojado en Stripe. Esta web no solicita ni guarda los datos de la tarjeta.</p>
-      <p class="checkout-note">La integración está en validación. La confirmación se consulta en el servidor mediante un verificador de esta pestaña.</p>
-      @if (error()) { <p class="notice" role="alert">{{ error() }}</p> }
-    } @else if (availability() === 'loading') {
-      <p role="status">Comprobando disponibilidad…</p>
-    } @else {
-      <p class="notice"><strong>Apoyo a la plataforma · Próximamente.</strong><span>Las aportaciones aún no están disponibles. Esta página no acepta ni procesa dinero.</span></p>
-    }
+    <p>Elige el importe en PayPal. El apoyo es puntual, voluntario y no concede acceso ni ventajas.</p>
+    <a class="button checkout-submit" href="https://paypal.me/devel8ping" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-describedby="paypal-note">Apoyar con PayPal <span aria-hidden="true">↗</span></a>
+    <p id="paypal-note" class="checkout-note">Se abrirá PayPal en una pestaña nueva. El pago y su confirmación se realizan allí; esta web no solicita tus datos bancarios.</p>
+
   </section>
   }
 </div>

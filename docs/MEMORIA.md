@@ -1,5 +1,12 @@
 # Memoria de continuidad
 
+## PayPal como apoyo público — 21/11
+
+- Propietario ha creado correo de desarrollo (dirección todavía no proporcionada) y cuenta PayPal Personal; comparte enlace público https://paypal.me/devel8ping. Perfil público comprobado: Dev Apps @devel8ping. Propietario transcribe respuesta del asistente PayPal que admite cuenta Personal para apoyo y clasifica apoyo por trabajo como comercial/Bienes y Servicios con comisión; no tratarlo como dictamen fiscal ni aprobación de una entidad benéfica.
+- /apoyar sustituye formulario público sandbox por enlace Apoyar con PayPal; nueva pestaña, noopener/noreferrer y sin referrer. Importe/pago/confirmación exclusivamente en PayPal, sin supuesta confirmación propia ni ventajas en addons. No claves/integración bancaria PayPal. Constructor deja de consultar disponibilidad Stripe; se conserva verificador de retornos históricos de prueba. Backend sandbox permanece configurado; no se desactivó en Vercel ni se activó live.
+- Suite completa20 API/25 SQL/106 Angular/1 SSR/2 empaquetado PASS; paquete14/14. Prueba existente comprueba enlace y ausencia de formulario Probar con. Revisión visual del build real local escritorio y390px sin scroll horizontal; capturas fase6-paypal-apoyo-local-{escritorio,movil}.jpg, no datos administrativos ficticios ni prueba de pago PayPal. No se ha enviado dinero.
+- Pendiente inmediato: subir, verificar Vercel y captura alojada. Migración de correo pendiente de conocer dirección nueva; no cambiar cuentas/usuarios ni permisos todavía.
+
 ## Cierre validación sandbox alojado — 20/11
 
 - Aprobados pago normal5€, desafío3DS3€, rechazo3€, cancelación desde Checkout, caducidad, controles negativos y recuperación de webhook. Todo test; modo live sigue desactivado y código rechaza claves live.
@@ -554,3 +561,5 @@ Estado vigente Stripe20/11: sandbox alojado habilitado con autorización del pro
 Cierre pruebas principales sandbox alojado20/11: éxito5€,3DS3€ challenge autenticado y rechazo3€ card_declined/unpaid verificados con Stripe y Supabase. Paid5/2100 céntimos ficticios, expired8; rechazo no aumenta total. Caducidad técnica, duplicados y controles negativos alojados ya aprobados. Captura real fase6-rechazo-checkout-alojado-real.jpg. No dinero real ni modo live. Pendientes de aceptación ampliada: cancelación manual Checkout y ensayo fallo/reentrega cloud (recuperación local histórica no los sustituye). Siguiente bloque: preparar por separado modo real/operación solo con autorización; implementación actual rechaza claves live.
 
 Preparación live20/11 en curso: usuario confirma solo sandbox. Cuenta real observada en Activar Payments con requisitos sin iniciar. Pestaña11 entregada al titular; no datos financieros ni contratos enviados por agente. Captura fase6-activacion-real-pendiente-stripe.jpg. PRODUCCION contiene diseño concreto de separación live para todo recorrido; todavía sin implementación live, claves ni activación. Siguiente: titular pulsa Inicio y completa activación directamente en Stripe; informar habilitada/en revisión sin compartir datos. Sandbox sigue operativo.
+
+Dato vigente20/11: propietario es particular que crea addons por ocio y declara no tener empresa. Activación real pendiente de confirmar elegibilidad con Stripe; no dirigirle a declarar empresa ficticia ni a alta profesional automática. Apoyo por contenido podría encajar como propinas según política, sujeto a confirmación de Stripe y situación real. No donación benéfica ni exención fiscal asumida. No se ha enviado formulario de activación. Mantener live desactivado.

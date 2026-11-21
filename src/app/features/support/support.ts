@@ -38,7 +38,7 @@ export class Support {
     inject(PageSeo).update({title:'Apoya la plataforma | WoW Forever Addons',description:'Apoya voluntariamente el mantenimiento de WoW Forever Addons. Las aportaciones no conceden acceso ni ventajas.',path:'/apoyar'});
     afterNextRender(() => {
       this.restoreReturn(new URL(window.location.href));
-      void this.loadAvailability();
+      // Public support uses PayPal; retain verification of historical Stripe test returns.
     });
   }
 

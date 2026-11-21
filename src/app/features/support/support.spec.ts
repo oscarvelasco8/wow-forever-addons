@@ -47,7 +47,7 @@ describe('Support test checkout', () => {
     TestBed.configureTestingModule({providers:[provideRouter([]),{provide:SUPPORT_NAVIGATE,useValue:navigate}]});
     const fixture=TestBed.createComponent(Support); fixture.detectChanges(); await fixture.whenStable(); await fixture.componentInstance.loadAvailability();
     await fixture.componentInstance.startCheckout(); fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('no acepta ni procesa dinero'); expect(navigate).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('a[href="https://paypal.me/devel8ping"]')?.textContent).toContain('Apoyar con PayPal'); expect(fixture.nativeElement.textContent).not.toContain('Probar con'); expect(navigate).not.toHaveBeenCalled();
   });
   it('reuses an uncertain attempt, changes it with amount and rejects external redirects', async () => {
     const bodies: string[]=[]; let unsafe=false;
