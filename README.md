@@ -4,7 +4,9 @@
 
 Plataforma de distribución gratuita de addons para WoW Forever y apoyo voluntario al proyecto. Rumbo es el primer addon del catálogo.
 
-Estado: Angular y API Node.js, catálogo público conectado a Supabase, fichas SSR con galería de imágenes publicadas y descarga gratuita con RLS y enlaces de 60 segundos. Panel con MFA, edición de borradores, creación de versiones, subidas privadas de ZIP/imágenes y previsualización, comprobados localmente con datos de prueba. Rumbo sigue en borrador sin distribuir. Recuperación de contraseña sin resolver y aplazada; revisión editorial y auditoría implementadas, pendientes de QA visual/HTTP con sesión del propietario. Gestión completa de archivos, aportaciones y despliegue pendientes.
+Estado a 21/11/2026: Angular y API Node.js en Vercel, catálogo conectado a Supabase, fichas SSR y descargas gratuitas con RLS y enlaces de 60 segundos. Rumbo está publicado. El panel administrativo usa MFA; la cuenta de desarrollo inicia sesión con MFA y mantiene acceso al proyecto Supabase original. La migración del correo de desarrollo en Vercel y en el usuario administrativo está validada. Stripe se cerró y su integración y variables alojadas se retiraron; el apoyo público usa un enlace PayPal.Me externo y voluntario. Todas las funciones y addons son gratuitos.
+
+Pendientes: actualizar y ejecutar el smoke público para el estado publicado de Rumbo; revisar referencias de contacto y confirmar si se retira el Owner personal antiguo de Supabase. La recuperación de contraseña sigue aplazada. Después, continuar la revisión de operación: restauración de copias, dependencias, costes y observabilidad. El despliegue más reciente registrado es c5c2b43; la revisión visual alojada se completó en la fase 8, no en esta sesión.
 
 - [Preparación y comprobaciones del entorno](docs/ENTORNO.md)
 - [Alcance y fases de desarrollo](docs/ALCANCE.md)

@@ -1,5 +1,16 @@
 # Memoria de continuidad
 
+## Estado vigente para continuar — 21/11/2026
+
+- Repositorio web: devel8ping-code/wow-forever-addons. Origin actualizado; trabajo en el worktree main `C:/Users/Oscar/AppData/Local/WoWForeverAddons/worktrees/recovery`. No tocar addon-rumbo.
+- Correo de desarrollo migrado en Vercel y administrador web; titular confirmó nuevo login con MFA. Supabase dashboard devel8ping-code es Owner del proyecto original; Owner personal anterior aún permanece. Su retirada exige autorización específica; acceso nuevo está verificado.
+- Stripe cerrado por titular y retirado del código, dependencias, `.env` y nueve entradas Vercel. Main c5c2b43 está desplegado con status success tras borrar variables; quedan `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` en Vercel. Endpoints Stripe devuelven410; ledger y migraciones históricos se conservan. No reactivar Stripe ni pedir claves.
+- Apoyo público mediante PayPal.Me devel8ping, enlace externo y voluntario. La web no confirma pagos; addons gratuitos sin ventajas. La última revisión visual alojada de `/apoyar` se conserva en `docs/capturas/fase8-stripe-retirado-paypal-real.jpg` y `fase8-stripe-variables-eliminadas-real.jpg`.
+- Smoke actualizado: Rumbo publicado debe devolver200 y título con Rumbo. Smoke público actual18/18 PASS; empaquetado2/2 PASS; chequeo de entorno reconoce el origin actual. La revisión visual de esta sesión no se completó: Computer Use se detuvo porque no pudo identificar la URL de Chrome; no se afirma verificación visual nueva.
+- Auditoría de referencias: corregidos remoto/cuenta vigentes en README, docs/ENTORNO y chequeo de entorno. Menciones antiguas restantes son históricas o identifican el repo privado del addon, que debe conservarse. No hay referencias activas `mailto`, direcciones de soporte personales ni correos antiguos en búsqueda documental/código. No retirar accesos personales ni alterar el repo de referencia.
+- Siguientes pasos: publicar esta actualización y comprobar el despliegue; continuar operación (copias, dependencias, costes y observabilidad). Recuperación de contraseña permanece aplazada. Retirar el Owner personal solo con autorización específica. No repetir pruebas aceptadas de publicación, migración de correo o Stripe.
+- Auxiliar4202 detenido. Capturas previas no versionadas conservadas localmente; algunas contienen correo personal y no deben añadirse indiscriminadamente a Git. Último despliegue público verificado c5c2b43 hasta publicar estos cambios; la interfaz no se ha modificado.
+
 ## PayPal como apoyo público — 21/11
 
 - Propietario ha creado correo de desarrollo (dirección todavía no proporcionada) y cuenta PayPal Personal; comparte enlace público https://paypal.me/devel8ping. Perfil público comprobado: Dev Apps @devel8ping. Propietario transcribe respuesta del asistente PayPal que admite cuenta Personal para apoyo y clasifica apoyo por trabajo como comercial/Bienes y Servicios con comisión; no tratarlo como dictamen fiscal ni aprobación de una entidad benéfica.

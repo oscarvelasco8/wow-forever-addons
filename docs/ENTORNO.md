@@ -50,14 +50,14 @@ git ls-remote origin HEAD
 
 ## Repositorios
 
-- Web: `https://github.com/oscarvelasco8/wow-forever-addons.git`.
+- Web vigente desde 21/11/2026: `https://github.com/devel8ping-code/wow-forever-addons.git`.
 - Addon de referencia: `oscarvelasco8/addon-rumbo`, privado y accesible mediante la integración de GitHub.
 
 La web ya estaba clonada en `main`, con un único commit inicial y README. No se ha vuelto a clonar ni se ha mezclado el código Lua con la aplicación web.
 
 El acceso de la integración de GitHub no autentica automáticamente Git en una terminal. `git ls-remote` del repositorio web público verifica conectividad de lectura, no permisos para publicar cambios. La autenticación local para hacer push se comprobará antes del primer envío, sin guardar tokens en archivos.
 
-La identidad de commits se configuró solo en este repositorio con el usuario GitHub comprobado `oscarvelasco8` y su dirección noreply basada en el identificador de cuenta. No se modificó la identidad global. Se configuraron `core.autocrlf=false` y `core.safecrlf=warn` localmente; la base del proyecto definirá finales de línea mediante `.gitattributes`.
+La identidad de commits inicial, con `oscarvelasco8`, pertenece al período anterior a la transferencia. La cuenta vigente del repositorio web es `devel8ping-code`; no se debe trasladar la configuración antigua a otros repositorios ni cambiar la identidad global. Se configuraron `core.autocrlf=false` y `core.safecrlf=warn` localmente; la base del proyecto definirá finales de línea mediante `.gitattributes`.
 
 ## Resultado de la fase
 
