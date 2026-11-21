@@ -40,7 +40,7 @@
       "dest": "/api/render?slug=$1"
     },
     {
-      "src": "/administracion(?:/categorias|/verificar|/restablecer|/addons/[^/]+(?:/archivos|/publicacion|/preparar)?)?/?",
+      "src": "/administracion(?:/cuenta|/categorias|/verificar|/restablecer|/addons/[^/]+(?:/archivos|/publicacion|/preparar)?)?/?",
       "dest": "/index.csr.html"
     },
     {
