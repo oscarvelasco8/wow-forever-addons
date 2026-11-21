@@ -28,6 +28,32 @@ describe('Supabase administrator adapter', () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
+  it('requires verified membership and MFA before requesting an email change', async () => {
+    vi.stubGlobal('location', { origin: 'https://wow-forever-addons.vercel.app' });
+    await expect(gateway.requestEmailChange('new@example.test')).rejects.toThrow();
+    expect(mock.auth.updateUser).not.toHaveBeenCalled();
+    mock.rpc.mockResolvedValue({ data: 'admin', error: null });
+    mock.auth.updateUser.mockResolvedValue({ error: null });
+    await gateway.requestEmailChange('new@example.test');
+    expect(mock.auth.updateUser).toHaveBeenCalledWith({ email: 'new@example.test' }, {
+      emailRedirectTo: 'https://wow-forever-addons.vercel.app/administracion/cuenta',
+    });
+  });
+
+  it('does not accept an expired email link on the strength of a cached session', async () => {
+    mock.auth.exchangeCodeForSession.mockResolvedValue({ error: new Error('expired') });
+    await expect(gateway.accountEmail('expired')).rejects.toThrow();
+    expect(mock.auth.getUser).not.toHaveBeenCalled();
+  });
+
+  it('reports the email validated by Auth and never unlocks password recovery for email links', async () => {
+    mock.auth.exchangeCodeForSession.mockResolvedValue({ error: null });
+    mock.auth.getUser.mockResolvedValue({ data: { user: { id: 'test-user', email: 'old@example.test', new_email: 'new@example.test' } }, error: null });
+    expect(await gateway.accountEmail('one-use-code')).toEqual({ email: 'old@example.test', pending: 'new@example.test', verified: false });
+    await expect(gateway.finishRecovery('long-test-password')).rejects.toThrow();
+    expect(mock.auth.updateUser).not.toHaveBeenCalled();
+  });
+
   it('uses a fixed same-origin recovery destination', async () => {
     vi.stubGlobal('location', { origin: 'http://192.168.1.137:4200' });
     mock.auth.resetPasswordForEmail.mockResolvedValue({ error: null });

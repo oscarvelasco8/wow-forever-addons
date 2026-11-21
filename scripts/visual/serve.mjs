@@ -12,7 +12,7 @@ const receipt=process.argv[2]==='receipt';
 const support=process.argv[2]==='support'||process.argv[2]==='support-limit'||receipt;
 const webhookReport=process.argv[2]==='webhook-report';
 const stripeReport=process.argv[2]==='stripe-report';
-const root=resolve(process.argv[2]==='assets'?'dist/assets-preview/browser':support?'dist/support-preview/browser':pagination?'dist/pagination-preview/browser':process.argv[2]==='categories'?'dist/categories-preview/browser':gallery?'dist/gallery-preview/browser':'dist/editorial-preview/browser');
+const root=resolve(process.argv[2]==='account'?'dist/account-preview/browser':process.argv[2]==='assets'?'dist/assets-preview/browser':support?'dist/support-preview/browser':pagination?'dist/pagination-preview/browser':process.argv[2]==='categories'?'dist/categories-preview/browser':gallery?'dist/gallery-preview/browser':'dist/editorial-preview/browser');
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'};
 createServer(async(req,res)=>{
   res.setHeader('Cache-Control','no-store');

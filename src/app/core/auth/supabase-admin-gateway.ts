@@ -137,6 +137,32 @@ export class SupabaseAdminGateway implements AdminAuthGateway {
     }
   }
 
+  async accountEmail(code = ''): Promise<{ email: string; pending: string; verified: boolean }> {
+    const client = await this.client();
+    if (code) {
+      if (code.length > 2048) { throw new Error('Invalid link.'); }
+      const { error } = await client.auth.exchangeCodeForSession(code);
+      if (error) { throw new Error('Invalid link.'); }
+    }
+    const decision = await this.checkAccess();
+    if (decision !== 'admin' && decision !== 'mfa-required') { throw new Error('Access denied.'); }
+    const { data, error } = await client.auth.getUser();
+    if (error || !data.user) { throw new Error('User unavailable.'); }
+    return { email: data.user.email ?? '', pending: data.user.new_email ?? '', verified: decision === 'admin' };
+  }
+
+  async requestEmailChange(email: string): Promise<void> {
+    email = email.trim();
+    if (!this.recoveryConfigured || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      await this.checkAccess() !== 'admin') { throw new Error('Email change denied.'); }
+    const client = await this.client();
+    const { error } = await preservePkceOnFailure(localStorage, () => client.auth.updateUser({ email }, {
+      emailRedirectTo: `${location.origin}/administracion/cuenta`,
+    }), result => !!result.error);
+    if (error?.status === 429) { throw new RecoveryRateLimitError(); }
+    if (error) { throw new Error('Email change failed.'); }
+  }
+
   async prepareMfa(enroll = false): Promise<{ factorId: string; qrCode?: string }> {
     if (await this.checkAccess() !== 'mfa-required') { throw new Error('MFA access denied.'); }
     const client = await this.client();

@@ -9,6 +9,7 @@
         "build": {
           "builder": "@angular/build:application",
           "configurations": {
+            "account": {"browser":"account-preview.ts","tsConfig":"tsconfig.account.json","outputPath":"../../dist/account-preview"},
             "assets": {"browser":"assets-preview.ts","tsConfig":"tsconfig.assets.json","outputPath":"../../dist/assets-preview"},
             "support": { "browser": "support-preview.ts", "tsConfig": "tsconfig.support.json", "outputPath": "../../dist/support-preview" },
             "pagination": { "browser": "pagination-preview.ts", "tsConfig": "tsconfig.pagination.json", "outputPath": "../../dist/pagination-preview" },

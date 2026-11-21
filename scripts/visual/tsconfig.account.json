@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.json","files":["account-preview.ts"],"include":["../../src/**/*.d.ts"]}
