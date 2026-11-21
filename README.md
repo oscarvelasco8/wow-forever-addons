@@ -1,3 +1,5 @@
+> Estado vigente 21/11/2026: cuenta Stripe cerrada por el titular. Integración retirada, endpoints antiguos responden 410. Apoyo público solo mediante PayPal.Me externo; las notas de Stripe siguientes son históricas.
+
 # WoW Forever Addons
 
 Plataforma de distribución gratuita de addons para WoW Forever y apoyo voluntario al proyecto. Rumbo es el primer addon del catálogo.

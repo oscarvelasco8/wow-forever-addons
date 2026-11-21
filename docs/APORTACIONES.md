@@ -1,3 +1,5 @@
+> Estado vigente 21/11/2026: cuenta Stripe cerrada por el titular. Integración retirada, endpoints antiguos responden 410. Apoyo público solo mediante PayPal.Me externo; las notas de Stripe siguientes son históricas.
+
 # Aportaciones voluntarias — preparación local
 
 ## Estado vigente20/11: sandbox alojado

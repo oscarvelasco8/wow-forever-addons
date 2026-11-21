@@ -3,6 +3,11 @@ import { provideRouter } from '@angular/router';
 import { App } from '../../src/app/app';
 import { Support } from '../../src/app/features/support/support';
 
+bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { App } from '../../src/app/app';
+import { Support } from '../../src/app/features/support/support';
+
 const preview=new URL(location.href).searchParams.get('receipt_preview');
 if(preview){
   const sid=preview==='unverified'?'cs_test_missing_preview':'cs_test_receipt_preview';

@@ -13,7 +13,7 @@ Las aportaciones se describirán como apoyo voluntario al desarrollo. No se prom
 - Catálogo público preparado para varios addons, con Rumbo como primera publicación.
 - Ficha, versiones, compatibilidad, changelog, créditos e instrucciones.
 - Descargas públicas y archivos publicados bajo control administrativo.
-- Aportaciones voluntarias mediante enlace externo PayPal.Me, sin permisos de compra asociados al addon. Stripe se conserva como integración histórica de pruebas, sin modo real activado.
+- Aportaciones voluntarias mediante enlace externo PayPal.Me, sin permisos de compra asociados al addon. Stripe retirado tras el cierre de la cuenta; se conserva únicamente la evidencia histórica de pruebas.
 - Supabase PostgreSQL, Storage y autenticación de administradores con RLS.
 - Angular y API Node.js compatibles con Vercel.
 - Diseño oscuro con acentos dorados, accesible y responsive; recursos propios o con licencia.
@@ -27,7 +27,7 @@ No forman parte del lanzamiento las cuentas de compradores, biblioteca de compra
 3. Diseño: componentes y navegación revisados en móvil, escritorio y teclado.
 4. Supabase: migraciones, RLS, almacenamiento y acceso administrativo verificados.
 5. Catálogo y descargas: versiones publicadas disponibles y borradores protegidos.
-6. Aportaciones: Stripe en pruebas, firma de webhook e idempotencia verificadas.
+6. Aportaciones: enlace externo PayPal.Me; sin procesamiento de pagos en la web.
 7. Administración: publicación, retirada de versiones y auditoría.
 8. Calidad: permisos, accesibilidad, SEO, rendimiento y flujos críticos.
 9. Producción: variables independientes, dominio, correo, observabilidad y reversión.

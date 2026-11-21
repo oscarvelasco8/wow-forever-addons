@@ -18,11 +18,6 @@ createServer(async(req,res)=>{
   res.setHeader('Cache-Control','no-store');
   res.setHeader('X-Robots-Tag','noindex, nofollow');
   res.setHeader('Content-Security-Policy',`default-src 'self'; connect-src ${pagination||support?"'self'":"'none'"}; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'`);
-  if(receipt&&req.url==='/api/support-status'){
-    if(req.method!=='POST'){res.writeHead(405).end();return;}
-    res.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify({mode:'test',state:process.argv[3]==='pending'?'pending':'paid',amount:300,currency:'eur'}));return;
-  }
-  if(support && req.url==='/api/support-checkout') {res.setHeader('Content-Type','application/json'); if(req.method==='GET'){res.writeHead(200).end(JSON.stringify({enabled:true,mode:'test',currency:'eur',amounts:[300,500,1000,2000]}));}else if(process.argv[2]==='support-limit'){res.writeHead(429,{'Retry-After':'60'}).end(JSON.stringify({error:'support_rate_limited',retryAfter:60}));}else{res.writeHead(503).end(JSON.stringify({error:'preview_no_stripe_connection'}));}return;}
   if(req.method!=='GET'){res.writeHead(405).end();return;}
   let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1:4201').pathname);}catch{res.writeHead(400).end();return;}
   const url=new URL(req.url,'http://127.0.0.1:4201');

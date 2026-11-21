@@ -21,9 +21,6 @@
     "test:packaging": "node --test tests/packaging/*.test.mjs",
     "verify:supabase": "node --env-file=.env scripts/verify-supabase.ts",
     "verify:storage": "node --env-file=.env scripts/verify-storage.ts",
-    "verify:webhook:local": "node scripts/verify-support-local.ts",
-    "stripe:listen": "node scripts/stripe-listener.mjs",
-    "stripe:recover": "node scripts/recover-stripe-events.mjs",
     "check:release": "node scripts/check-release.mjs",
     "check": "npm run typecheck:api && npm run test:api && npm run test:db && npm test && npm run build && npm run test:ssr && npm run test:packaging"
   },
@@ -43,7 +40,6 @@
     "fflate": "0.8.3",
     "rxjs": "~7.8.0",
     "sharp": "0.35.5",
-    "stripe": "23.2.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
