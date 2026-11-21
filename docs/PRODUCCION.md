@@ -4,7 +4,7 @@
 
 ## Estado operativo vigente — 21/11/2026
 
-- Web en Vercel Production. `main` commit `023e9be` con estado Vercel success; smoke público18/18 PASS tras el despliegue. Dominio canónico aún sin fijar; `/sitemap.xml` responde503 y no se publica canonical definitivo.
+- Web en Vercel Production. Commit `b79682a` con estado Vercel success; smoke público18/18 PASS tras el despliegue. Dominio canónico aún sin fijar; `/sitemap.xml` responde503 y no se publica canonical definitivo.
 - Proyecto Supabase `wow-forever-addons` activo y saludable, PostgreSQL17 en `eu-west-1`; organización en plan Free. En el plan Free no hay copias diarias automáticas. Supabase recomienda exportar con CLI y guardar fuera del proyecto; una copia SQL no incluye objetos de Storage. No se ha generado exportación ni ensayado restauración. Para hacerlo falta elegir destino de almacenamiento protegido y verificar el inventario/recuperación de objetos.
 - `npm.cmd audit --omit=dev`: cero vulnerabilidades informadas en dependencias de producción. Vercel conserva solo `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`; no se han consultado valores.
 - Stripe se cerró y su integración, endpoints activos y variables se retiraron. La preparación live de Stripe que aparece abajo es histórica y queda cancelada; no reconfigurar ni activar.
